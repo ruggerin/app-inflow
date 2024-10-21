@@ -1,0 +1,167 @@
+<script setup lang="ts">
+import { ref, onUnmounted, onMounted  } from 'vue';
+import treeview from "vue3-treeview";
+import "vue3-treeview/dist/style.css";
+import UiParentCard from '@/components/shared/UiParentCard.vue';
+import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
+import { type Perfil } from '@/models/Perfil';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+
+
+const perfilItem = ref<Perfil>();
+
+interface PermissoesItems {
+  id: number;
+  nome: string;
+  created_at: string;
+  updated_at: string;
+}
+
+onMounted(async () => {
+  await carregarDados();
+});
+
+
+async function carregarDados() {
+  const id = route.params.id;
+  console.log(id);
+  if (id == "0") {
+    return;
+  }
+  perfilItem.value = await fetchWrapper.get(`cadastros_basicos/perfil/${id}`);
+  console.log(perfilItem.value);
+}
+
+interface Permissoes {
+  id: number;
+  nome: string;
+  permissoes_items: PermissoesItems[];
+  created_at: string;
+  updated_at: string;
+}
+
+const permissoesStorage1 = ref<Permissoes[]>([
+  {
+    id: 1,
+    nome: 'Cadastros Básicos',
+    permissoes_items: [
+      { id: 202, nome: 'Cadastrar Fornecedor', created_at: '2021-10-10', updated_at: '2021-10-10' },
+      { id: 203, nome: 'Cadastrar Produto', created_at: '2021-10-10', updated_at: '2021-10-10' },
+      { id: 204, nome: 'Cadastrar Figura Giro', created_at: '2021-10-10', updated_at: '2021-10-10' },
+    ],
+    created_at: '2021-10-10',
+    updated_at: '2021-10-10',
+  },
+  {
+    id: 2,
+    nome: 'Controle de Permissões',
+    permissoes_items: [
+      { id: 205, nome: 'Permitir Bloquear/Desbloquear Fornecedores', created_at: '2021-10-10', updated_at: '2021-10-10' },
+      { id: 206, nome: 'Permitir Incluir cadastro do Fornecedor', created_at: '2021-10-10', updated_at: '2021-10-10' },
+    ],
+    created_at: '2021-10-10',
+    updated_at: '2021-10-10',
+  }
+]);
+
+// Função construtora para gerar a estrutura de permissões
+const createPermissoesTree = () => {
+  const tree: any = {};
+  const rootItems: string[] = [];
+
+  if (!perfilItem.value?.menus) {
+    console.error("Perfil não possui menus");
+    return;
+  }
+
+  perfilItem.value.menus.forEach((perm) => {
+    const parentId = `id${perm.id}`;
+    const childrenIds = perm.permissoes.map((item) => `sub_id${item.id}`);
+
+    // Adiciona a permissão principal
+    tree[parentId] = {
+      text: perm.nome,
+      children: childrenIds, // Aqui os filhos são os IDs
+      state: { checked: false },
+    };
+
+    // Adiciona os nós filhos separadamente com seus detalhes
+    perm.permissoes.forEach((item) => {
+      const childId = `sub_id${item.id}`;
+      tree[childId] = {
+        text: item.label,
+        state: { checked: false }, // Adicionando o estado do checkbox
+      };
+    });
+
+    // Adiciona a permissão principal aos roots
+    rootItems.push(parentId);
+  });
+
+  permissoesTeste.value = tree;
+  roots.value = rootItems;
+};
+
+const permissoesTeste = ref(createPermissoesTree(permissoesStorage1.value));
+
+const config = ref({
+  roots: ['id1', 'id2'],
+  checkboxes: true
+});
+
+const permissoesSelected = ref<number[]>([]);
+
+const getSelectedValues = () => {
+  const selected: { [key: number]: number[] } = {};
+
+  Object.keys(permissoesTeste.value).forEach((key) => {
+    const node = permissoesTeste.value[key];
+
+    // Checa se o item é uma permissão (pai)
+    if (node.children && node.state && node.state.checked) {
+      const permId = parseInt(key.replace("id", ""), 10);
+
+      // Somente processa IDs válidos
+      if (!isNaN(permId)) {
+        if (!selected[permId]) {
+          selected[permId] = [];
+        }
+
+        // Adiciona os itens filhos que estão selecionados
+        node.children.forEach((childId: string) => {
+          const childNode = permissoesTeste.value[childId];
+
+          if (childNode && childNode.state && childNode.state.checked) {
+            // Remove o 'sub_id' do filho para pegar o número original
+            const itemId = parseInt(childId.replace("sub_id", ""), 10);
+
+            // Apenas processa IDs válidos
+            if (!isNaN(itemId)) {
+              selected[permId].push(itemId);
+            }
+          }
+        });
+      }
+    }
+  });
+
+  return selected;
+};
+</script>
+
+<template>
+
+  <UiParentCard title="Edição de perfil de acesso">
+    {{ id }}
+    <treeview :nodes="permissoesTeste" :config="config">
+      <template v-slot:prepend="{ node }">
+        <v-checkbox :label="node.text" :value="node.id" v-model="permissoesSelected" />
+      </template>
+    </treeview>
+
+    <pre>{{ getSelectedValues() }}</pre>
+
+  </UiParentCard>
+</template>

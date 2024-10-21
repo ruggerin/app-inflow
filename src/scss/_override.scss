@@ -27,3 +27,11 @@ html {
     transform: rotate(270deg);
   }
 }
+.swal2-confirm {
+  background-color: rgb(var(--v-theme-primary)) !important;
+  color: white !important; /* Cor do texto */
+  border: none !important; /* Remover borda */
+  padding: 10px 20px !important; /* Espaçamento interno */
+  font-size: 16px !important; /* Tamanho da fonte */
+  border-radius: 4px !important; /* Bordas arredondadas */
+}

@@ -7,7 +7,7 @@ const props = defineProps({ item: Object, level: Number });
 <template>
   <!---Single Item-->
   <v-list-item
-    :to="item.to"
+    :to="item.path_url"
     rounded
     class="mb-1"
     active-color="secondary"
@@ -16,24 +16,15 @@ const props = defineProps({ item: Object, level: Number });
   >
     <!---If icon-->
     <template v-slot:prepend>
-      <Icon :item="item.icon" :level="level" />
+      <!-- <Icon :item="item.icon" :level="level" /> -->
+       <v-icon v-if="item.icon" :color="item.iconColor" size="small"  class="mr-2">{{ item.icon }}</v-icon>
     </template>
-    <v-list-item-title>{{ $t(item.title) }}</v-list-item-title>
+    <v-list-item-title>{{ $t(item.label) }}</v-list-item-title>
     <!---If Caption-->
-    <v-list-item-subtitle v-if="item.subCaption" class="text-caption mt-n1 hide-menu">
+    <v-list-item-subtitle v-if="item.label" class="text-caption mt-n1 hide-menu">
       {{ item.subCaption }}
     </v-list-item-subtitle>
     <!---If any chip or label-->
-    <template v-slot:append v-if="item.chip">
-      <v-chip
-        :color="item.chipColor"
-        class="sidebarchip hide-menu"
-        :size="item.chipIcon ? 'small' : 'default'"
-        :variant="item.chipVariant"
-        :prepend-icon="item.chipIcon"
-      >
-        {{ item.chip }}
-      </v-chip>
-    </template>
+ 
   </v-list-item>
 </template>

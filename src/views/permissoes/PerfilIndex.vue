@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref,onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import type { Header, Item } from 'vue3-easy-data-table';;
 import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
 import 'vue3-easy-data-table/dist/style.css';
-import type {User} from './usuario_iterface';
+
+
 
 
 import UiParentCard from '@/components/shared/UiParentCard.vue';
@@ -13,9 +14,8 @@ const themeColor = ref('rgb(var(--v-theme-secondary))');
 
 
 const headers: Header[] = [
-    { text: "Matrícula", value: "id" },
+    { text: "Código", value: "id" },
     { text: "Nome", value: "nome" },
-    { text: "E-mail", value: "email" },
     { text: "Ações", value: "acoes" },
 
 
@@ -25,18 +25,18 @@ const headers: Header[] = [
 onMounted(async () => {
 
 
-//Aplicação de filtro frontent
-await carregarDados()
+    //Aplicação de filtro frontent
+    await carregarDados()
 
-//console.log(items.value);
+    //console.log(items.value);
 
 
 });
-const items = ref<User[]>([]);
+const items = ref<Object[]>([]);
 
 
 async function carregarDados() {
-    items.value = await fetchWrapper.get(`users/`);
+    items.value = await fetchWrapper.get(`cadastros_basicos/perfil`);
     console.log(items.value)
 }
 
@@ -44,13 +44,16 @@ async function carregarDados() {
 
 <template>
     <v-row>
-        <UiParentCard title="Cadastro de usuarios">
+        <UiParentCard title="Perfis de acesso">
             <div class="d-flex justify-end" style="width: 100%;"> <v-btn icon variant="text">
                     <FilterIcon size="20" />
                 </v-btn>
 
                 <v-btn variant="text" @click="carregarDados">Atualizar</v-btn>
-                <v-btn variant="text" :to="{ path: '/controle-de-acesso/usuarios/'+0+'/editar' }">Novo</v-btn>
+                <v-btn :to="{ path: '/controle-de-acesso/perfil/0/editar' }" variant="text">
+                    <v-icon icon="mdi-plus"></v-icon>
+                    <span>Novo</span>
+                </v-btn>
 
             </div>
             <v-col cols="12" md="12">
@@ -59,8 +62,11 @@ async function carregarDados() {
                     :items="items">
 
                     <template #item-acoes="{ id }">
-                        <v-btn :to="{ path: '/controle-de-acesso/usuarios/'+id+'/editar' }" icon variant="text">
-                            <EditIcon size="20" />
+                        <v-btn :to="{ path: '/controle-de-acesso/perfil/' + id + '/editar' }" icon variant="text">
+                            <v-icon icon="mdi-pencil"></v-icon>
+                        </v-btn>
+                        <v-btn icon variant="text" color="error">
+                            <v-icon icon="mdi-delete"></v-icon>
                         </v-btn>
 
                     </template>

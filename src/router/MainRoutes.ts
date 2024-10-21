@@ -1,5 +1,4 @@
 
-
 const MainRoutes = {
   path: '/main',
   meta: {
@@ -16,12 +15,12 @@ const MainRoutes = {
 
     {
       name: 'Usuarios',
-      path: '/usuarios',
+      path: '/controle-de-acesso/usuarios',
       component: () => import('@/views/cadastros_basicos/users/UsersIndex.vue')
     },
     {
       name: 'UsuariosEdit',
-      path: '/usuarios/:id/editar',
+      path: '/controle-de-acesso/usuarios/:id/editar',
       component: () => import('@/views/cadastros_basicos/users/UserEdit.vue')
     },
     {
@@ -53,7 +52,7 @@ const MainRoutes = {
 
 
     {
-      name:'cadastro-generico', 
+      name: 'cadastro-generico',
       props: true,
       path: '/cadastro/basico/:controller_name',
       component: () => import('@/views/cadastros_basicos/cadastro_generico/CadastroRapidoCrud.vue')
@@ -64,17 +63,44 @@ const MainRoutes = {
       component: () => import('@/views/agendamento/AgendamentoComponent.vue')
     },
     {
-      name:'cadastro-basico-config',
+      name: 'agendamento-solicitar',
+      path: '/agendamento/solicitar',
+      component: () => import('@/views/agendamento/solicitar_agendamento/SolicitarAgendamentoIndex.vue')
+    },
+    {
+      name: 'agendamento-solicitar-edit',
+      path: '/agendamento/solicitar/:id/editar',
+      component: () => import('@/views/agendamento/solicitar_agendamento/SolicitarAgendamentoEdit.vue')
+    },
+
+
+
+
+    {
+      name: 'cadastro-basico-config',
       path: '/configuracao-cadastro-basico',
-      component: ()=>   import('@/views/cadastros_basicos/configuracao_cadastro_basico/CadastroBasicoIndex.vue')
+      component: () => import('@/views/cadastros_basicos/configuracao_cadastro_basico/CadastroBasicoIndex.vue')
 
     },
     {
-      name:'controleacesso-perfil-edit',
-      path: '/controle-de-acesso/perfil/:id/edit',
-      component: ()=>   import('@/views/permissoes/PermissoesIndex.vue')
+      name: 'controleacesso-perfil-edit',
+      path: '/controle-de-acesso/perfil/:id/editar',
+      component: () => import('@/views/permissoes/PerfilEdit.vue')
 
-    }
+    },
+    {
+      name: 'controleacesso-perfil-index',
+      path: '/controle-de-acesso/perfil',
+      component: () => import('@/views/permissoes/PerfilIndex.vue')
+
+    },
+
+    {
+      name: 'parametros-menus',
+      path: '/parametros/menus',
+      component: () => import('@/views/cadastros_basicos/menu/CadastroMenu.vue')
+    },
+
 
 
 

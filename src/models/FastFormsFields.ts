@@ -7,6 +7,7 @@ export interface FastFormField {
     readonly? : boolean | null;
     value? : string | null;
     hidden? : boolean | null;
+    hidden_index? : boolean | null;
     colecao_helper : string| null;
 
 }

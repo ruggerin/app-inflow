@@ -6,6 +6,8 @@ import type { Header, Item } from 'vue3-easy-data-table';
 import UiParentCard from '@/components/shared/UiParentCard.vue';
 import 'vue3-easy-data-table/dist/style.css';
 import { VueDraggableNext } from 'vue-draggable-next'
+import Swal from 'sweetalert2';
+
 
 const headers = ref<Header[]>([
     { text: 'Tabela', value: 'TABLE_NAME', sortable: true },
@@ -42,12 +44,14 @@ interface FormularioCadastro {
 
 interface columns {
     'order': number,
+
     'COLUMN_NAME': string,
     'DATA_TYPE': string,
     'IS_NULLABLE': string,
     'cadastro_basico_id': number | null,
     'colecao_helper': string | null,
     'hidden': boolean | null,
+    'hidden_index': boolean | null,
     'id': number | null,
     'label': string | null,
     'motivo_alteração': string | null,
@@ -88,6 +92,11 @@ function handleItemClick(TABLE_NAME: string) {
     edit(TABLE_NAME)
 }
 
+const esconderLista = ref(false);
+function setVisualizateForm(){
+    esconderLista.value = !esconderLista.value;
+}
+
 const formEditDialog = ref(false);
 const formEditDialogLoading = ref(false);
 
@@ -121,25 +130,40 @@ const tiposDados = [
 ];
 
 const submitButtonLoading = ref(false);
-async function submitEdit() {
-    submitButtonLoading.value = true;
 
-    editForm.value?.columns.forEach((column, index) => {
-        column.order = index + 1;
-    });
 
-    await fetchWrapper.post('cadastros_basicos/configuracao_cadastro_basico/' + editForm.value?.TABLE_NAME + '/update', editForm.value).then((response) => {
+
+async function submitForm() {
+    try {
+
+        submitButtonLoading.value = true;
+
+        editForm.value?.columns.forEach((column, index) => {
+            column.order = index + 1;
+        });
+        
+        const response = await fetchWrapper.post('cadastros_basicos/configuracao_cadastro_basico/' + editForm.value?.TABLE_NAME + '/update', editForm.value);
         console.log(response);
-    });
-    if (editForm.value?.TABLE_NAME) {
-        edit(editForm.value?.TABLE_NAME);
+
+        // Exibir alerta de sucesso
+        Swal.fire({
+            icon: 'success',
+            title: 'Sucesso',
+            text: 'Operação realizada com sucesso!',
+        });
+        submitButtonLoading.value = false;
+    } catch (error) {
+        console.error('Erro ao salvar configuração:', error);
+        const message = (error as { message?: string }).message || 'Ocorreu um erro ao salvar a configuração. Por favor, tente novamente.';
+        // Exibir alerta de erro
+        Swal.fire({
+            icon: 'error',
+            title: 'Erro',
+            text: message,
+        });
+        submitButtonLoading.value = false;
     }
-    submitButtonLoading.value = false;
-
-
-
 }
-
 
 </script>
 <template>
@@ -149,7 +173,7 @@ async function submitEdit() {
             <UiParentCard title="Configuração Cadastro Básico">
                 <v-row>
 
-                    <v-col cols="2">
+                    <v-col v-if="!esconderLista" cols="3">
 
                         <!--   <EasyDataTable :headers="headers" :items="listItems()" :loading="false" class="elevation-1">
                             <template #item-actions="{ TABLE_NAME }">
@@ -185,8 +209,9 @@ async function submitEdit() {
                             </v-list>
                         </div>
                     </v-col>
+                  
+                    <v-col :cols="esconderLista ? 12 : 9" class="parent-container">
 
-                    <v-col cols="10">
                         <v-card v-if="formEditDialogLoading">
                             <v-card-text class="d-flex justify-center align-center" style="height: 100vh;">
                                 <v-progress-circular indeterminate color="primary"></v-progress-circular>
@@ -197,7 +222,8 @@ async function submitEdit() {
                                 <v-toolbar color="primary" dark>
                                     <v-toolbar-title>{{ editForm?.TABLE_NAME }}</v-toolbar-title>
                                     <v-spacer></v-spacer>
-                                    <v-btn :loading="submitButtonLoading" variant="text" @click="submitEdit">Salvar</v-btn>
+                                    <v-btn :loading="submitButtonLoading" variant="text"
+                                        @click="submitForm">Salvar</v-btn>
                                     <v-btn icon @click="formEditDialog = false">
                                         <v-icon>mdi-close</v-icon>
                                     </v-btn>
@@ -233,7 +259,8 @@ async function submitEdit() {
                                                     <th width="400">Tipo Apresentação</th>
 
                                                     <th width="400">Coleção Apoio</th>
-                                                    <th>Esconder</th>
+                                                    <th>Esconder Form.</th>
+                                                    <th>Esconder Lista</th>
                                                     <th>Somente Leitura</th>
                                                     <th>Obrigatório</th>
 
@@ -269,6 +296,10 @@ async function submitEdit() {
                                                             dense></v-switch>
                                                     </td>
                                                     <td>
+                                                        <v-switch color="primary" v-model="row.hidden_index" hide-details
+                                                            dense></v-switch>
+                                                    </td>
+                                                    <td>
                                                         <v-switch color="primary" v-model="row.readonly" hide-details
                                                             dense></v-switch>
                                                     </td>
@@ -291,6 +322,12 @@ async function submitEdit() {
                                 <h3> Selecione a tabela para configurar o cadastro</h3>
                             </v-card-text>
                         </v-card>
+                        <div class="btn-container">
+                            <v-btn @click="setVisualizateForm()" icon text small>
+                                
+                                <v-icon v-if="esconderLista">mdi-arrow-right-bold-box-outline</v-icon>
+                                <v-icon v-else="esconderLista">mdi-arrow-left-bold-box-outline</v-icon></v-btn>
+                        </div>
 
                     </v-col>
 
@@ -305,6 +342,18 @@ async function submitEdit() {
 
 </template>
 <style scoped>
+
+.parent-container {
+  position: relative; /* Define a posição relativa para o contêiner pai */
+}
+
+.btn-container {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  z-index: 1000; /* Certifique-se de que o valor de z-index seja maior que o das outras divs */
+}
 .scrollable-container {
     max-height: 75vh;
     overflow-y: auto;

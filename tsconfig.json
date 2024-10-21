@@ -5,19 +5,15 @@
     "ignoreDeprecations": "5.0",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@app/*": ["./app/*"],
+      "@assets/*": ["./assets/*"],
+      "@components/*": ["./components/*"],
+      "@styles/*": ["./styles/*"],
+      "@utils/*": ["./utils/*"]
     },
     "allowJs": true
   },
-
-  "paths": {
-    "@app/*": ["./app/*"],
-    "@assets/*": ["./assets/*"],
-    "@components/*": ["./components/*"],
-    "@styles/*": ["./styles/*"],
-    "@utils/*": ["./utils/*"]
-  },
-
   "references": [
     {
       "path": "./tsconfig.vite-config.json"

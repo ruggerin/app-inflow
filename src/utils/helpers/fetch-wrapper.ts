@@ -10,7 +10,7 @@ export const fetchWrapper = {
 const baseUrl = `${import.meta.env.VITE_API_URL}`;
 
 function request(method: string) {
-  return (url: any, body?: any) => {
+  return (url: string, body?: any) => {
     const requestOptions: any = {
       method,
       headers: {
@@ -18,17 +18,19 @@ function request(method: string) {
         'Accept': 'application/json',
       }
     };
-    if (body instanceof FormData) {
 
-      //requestOptions.headers['Content-Type'] = 'multipart/form-data';
+    if (method.toUpperCase() === 'GET' && body) {
+      // Transformar body em query parameters
+      const queryParams = new URLSearchParams(body).toString();
+      url = `${url}?${queryParams}`;
+    } else if (body instanceof FormData) {
       requestOptions.body = body;
     } else if (body) {
       requestOptions.headers['Content-Type'] = 'application/json';
       requestOptions.body = JSON.stringify(body);
     }
-    console.log(requestOptions.body)
-    return fetch(`${baseUrl}/${url}`, requestOptions).then(handleResponse);
 
+    return fetch(`${baseUrl}/${url}`, requestOptions).then(handleResponse);
   };
 }
 
