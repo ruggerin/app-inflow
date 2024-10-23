@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import type { Header, Item } from 'vue3-easy-data-table';;
 import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
 import 'vue3-easy-data-table/dist/style.css';
@@ -11,6 +11,7 @@ import { type Fornecedor, getFornecedorList } from '@/models/Fornecedor';
 
 import UiParentCard from '@/components/shared/UiParentCard.vue';
 import Swal from 'sweetalert2';
+import IndexAgendamentoEditacaoRapida from './IndexAgendamentoEditacaoRapida.vue';
 
 const themeColor = ref('rgb(var(--v-theme-secondary))');
 
@@ -57,7 +58,34 @@ interface Status {
     ativo?: boolean;
     cor_fundo?: string | null;
 }
+const emptyAgendamento: Agendamento = {
+    id: 0,
+    data_agendamento: new Date(),
+    data_entrega: new Date(),
+    periodo_dia: null,
+    status_id: null,
+    tipo_agendamento: null,
+    volume_total: null,
+    quantidade_total: null,
+    fornecedor_id: null,
+    pedido_id: null,
+    doca_id: null,
+    created_at: new Date(),
+    updated_at: new Date(),
+    horario_inicio: null,
+    horario_fim: null,
+    user_id_created: null,
+    user_id_updated: null,
+    user_id_deleted: null,
+    motivo_alteracao: null,
+    aprovacao_usuario_id: null,
+    aprovacao_datahora: null,
+    obervacao_solicitante: null,
+    agendamento_documentos: [],
+    agendamento_anexos: []
+};
 
+const agendamentoFastEdit = ref<Agendamento>({ ...emptyAgendamento });
 
 
 function formatDateTime(date: string, time: string): string {
@@ -73,15 +101,14 @@ const calendarEvents = computed(() => {
         },
         description: agendamento.fornecedor_id ? getFornecedorNomeById(agendamento.fornecedor_id) : '',
         //color:  "blue" , // Você pode ajustar a cor conforme necessário
-        color: agendamento.status_id ? colorQalendar(agendamento.status_id) : 'grey',
-        isEditable: true // Defina se o evento é editável ou não
+        color: agendamento.status_id ? getStatusById(agendamento.status_id).cor_fundo : 'grey',//agendamento.status_id ? colorQalendar(agendamento.status_id) : 'grey',
+        isEditable: true,
+        isCustom: true,
 
     }));
 });
 
-function saveEventChanges() {
-    console.log('saveEventChanges')
-}
+
 function colorQalendar(status_id: number): string {
     switch (status_id) {
         case 1:
@@ -96,12 +123,21 @@ function colorQalendar(status_id: number): string {
     }
 }
 
+function saveEventChanges(props: any) {
+    console.log(props)
+    console.log('saveEventChanges')
+}
 
 // Configurações do calendário
 const calendarConfig = ref({
     time: {
         timeStart: '08:00',
         timeEnd: '18:00',
+    },
+    isSmal: true,
+    eventDialog: {
+        isEditable: false,
+        isCustom: true
     },
 
 });
@@ -177,6 +213,14 @@ function fornecedorSelectProps(item: any) {
         subtitle: item.cnpj_cpf,
     };
 }
+
+
+
+function getAgendamentoById(id: number): Agendamento {
+
+    return items.value.find(agendamento => agendamento.id == id) || emptyAgendamento;
+}
+
 const params = ref({
     data_inicial: formatDate(dataInicial),
     data_final: formatDate(dataFinal),
@@ -184,6 +228,12 @@ const params = ref({
     status_id: '',
 });
 
+function extractTimeFromDate(date: string): string {
+    return date.substring(11, 16);
+}
+function getObjHourString(objetct: any): string {
+    return extractTimeFromDate(objetct.start) + '-' + extractTimeFromDate(objetct.end);
+}
 const toggle = ref(0);
 </script>
 
@@ -254,7 +304,7 @@ const toggle = ref(0);
 
                 </v-btn-toggle>
             </v-col>
-            <v-col cols="12" md="12" v-if="toggle == 0">
+            <v-col cols="12" md="12" v-if="toggle == 1">
 
 
 
@@ -281,30 +331,61 @@ const toggle = ref(0);
             <v-col cols="12" v-else>
                 <div class="calendar-container is-light-mode">
                     <Qalendar is-light-mode :events="calendarEvents" :config="calendarConfig">
-                        <template #eventDialog="props">
-                            <!-- Certifique-se que props.eventDialogData está sendo passado corretamente -->
-                            <div v-if="props.eventDialogData">
-                                <!-- Título do evento -->
-                                <div :style="{ marginBottom: '8px', fontWeight: 'bold' }">Editar Evento: {{
-                                    props.eventDialogData.title }}</div>
+                        <template #weekDayEvent="eventProps">
+                            <div class="pa-2"
+                                :style="{ backgroundColor: eventProps.eventData.color, color: '#fff', width: '100%', height: '100%', overflow: 'hidden' }">
+                                <v-row>
+                                    <v-col cols="12">
 
-                                <!-- Input de edição para o título -->
-                                <input class="flyout-input" type="text" v-model="props.eventDialogData.title"
-                                    :style="{ width: '90%', padding: '8px', marginBottom: '8px' }">
-
-                                <!-- Campo adicional se precisar -->
-                                <textarea v-model="props.eventDialogData.description" placeholder="Adicionar descrição"
-                                    :style="{ width: '90%', padding: '8px', marginBottom: '8px' }"></textarea>
-
-                                <!-- Botões de ação -->
-                                <button @click="saveEventChanges()">
-                                    Salvar
-                                </button>
-                                <button @click="props.closeEventDialog">
-                                    Cancelar
-                                </button>
+                                        <span> <v-icon>mdi-clock</v-icon> {{ getObjHourString(eventProps.eventData.time)
+                                            }}</span>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <span>{{ eventProps.eventData.description }}</span>
+                                    </v-col>
+                                </v-row>
                             </div>
                         </template>
+                        <template #eventDialog="props">
+                            <v-card>
+                                <v-toolbar dark color="primary" style="flex: unset">
+                                    <v-toolbar-title>Agendamento</v-toolbar-title>
+                                    <v-spacer></v-spacer>
+                                    <v-toolbar-items>
+                                        <v-btn @click="props.closeEventDialog" rounded="md" dark small
+                                            icon><v-icon>mdi-close</v-icon></v-btn>
+                                    </v-toolbar-items>
+                                </v-toolbar>
+                                <v-card-text>
+                                    <IndexAgendamentoEditacaoRapida v-if="props.eventDialogData != null"
+                                        :agendamento="getAgendamentoById(props.eventDialogData.id)">
+                                    </IndexAgendamentoEditacaoRapida>
+                                </v-card-text>
+                            </v-card>
+                            <!--  <v-card>
+                                <v-toolbar dark color="primary" style="flex: unset">
+                                    <v-toolbar-title>Agendamento</v-toolbar-title>
+                                    <v-spacer></v-spacer>
+                                    <v-toolbar-items>
+                                        <v-btn    @click="props.closeEventDialog" rounded="md" dark small icon><v-icon>mdi-close</v-icon></v-btn>
+                                    </v-toolbar-items>
+                                </v-toolbar>
+                                <v-card-text>
+                                    <v-row>
+
+                                   
+                                    </v-row>
+                                </v-card-text>
+                                <v-card-actions>
+                                    <v-btn @click="saveEventChanges(props)" color="editar">Salvar</v-btn>
+                                    <v-btn @click="props.closeEventDialog" color="error">Cancelar</v-btn>
+                                </v-card-actions>
+                          
+                            </v-card> -->
+
+
+                        </template>
+
                     </Qalendar>
                 </div>
 
@@ -317,4 +398,19 @@ const toggle = ref(0);
 </template>
 <style>
 @import "qalendar/dist/style.css";
+
+.calendar-container {
+    width: 100%;
+    max-width: 100%;
+    height: 800px;
+    max-height: calc(100vh - 20px);
+}
+
+.event-flyout {
+
+    width: 700px !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%)!important;
+}
 </style>

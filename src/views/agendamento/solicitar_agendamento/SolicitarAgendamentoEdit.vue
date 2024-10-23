@@ -13,9 +13,11 @@ import type { Agendamento } from '@/models/Agendamento';
 
 import { type Fornecedor, getFornecedorNomeById, getFornecedorList } from '@/models/Fornecedor';
 import { type AgendamentoDocumento } from '@/models/AgendamentoDocumento';
+
 import 'v-calendar/dist/style.css';
 import { type HorarioDisponivel } from '@/models/AgendamentoJanelas';
 const themeColor = ref('rgb(var(--v-theme-secondary))');
+import ResumoAgendamento from '../ResumoAgendamento.vue';
 
 
 const agendamento = ref<Agendamento>({
@@ -222,11 +224,15 @@ function fornecedorSelectProps(item: any) {
 
 const botaoNavegacaoTexto = ref('Próximo');
 function botaoNavegacaoAcao() {
+    console.log(tab.value);
 
-    if (tab.value < 3)
+    if (tab.value < 3) {
         avancarAction();
-    else
-        formSubmit();
+    }
+    else {
+        showResumoAgendamento.value = true;
+        //formSubmit();
+    }
 
 
 }
@@ -332,11 +338,22 @@ watch(() => janelaIndex.value, (newValue) => {
     }
 },);
 
+const showResumoAgendamento = ref(false);
 
+function resumoAgendamentoClose() {
+    showResumoAgendamento.value = false;
+}
 // Exibir o erro no template
 </script>
 
 <template>
+    <v-dialog v-model="showResumoAgendamento">
+
+        <div class="d-flex justify-center align-center" style="height: 100vh;">
+            <ResumoAgendamento @close="resumoAgendamentoClose" height="80vh" centered width="50%" :agendamento="agendamento"></ResumoAgendamento>
+        </div>
+
+    </v-dialog>
     <v-row>
         <UiParentCard title="Solicitação de agendamento">
 
@@ -615,10 +632,12 @@ watch(() => janelaIndex.value, (newValue) => {
                                                                 v-if="janelaIndex != null && docasJanelas().length > 0"
                                                                 rounded="1" style="height: 100%;"
                                                                 v-model="agendamento.doca_id" color="primary" vertical>
-                                                                <v-btn v-for="docaId in docasJanelas()" class="pa-5">
+                                                                <v-btn v-for="docaId in docasJanelas()" :value="docaId"
+                                                                    :key="docaId" class="pa-5">
                                                                     {{ docaId }}. {{ getDocaById(docaId).nome }}
                                                                 </v-btn>
                                                             </v-btn-toggle>
+
                                                         </div>
 
                                                     </v-col>
@@ -634,6 +653,11 @@ watch(() => janelaIndex.value, (newValue) => {
                                     </v-window-item>
                                     <v-window-item :value="3">
                                         <v-row class="mt-10">
+                                            <v-col cols=12>
+                                                <h3 class="text-primary">
+                                                    4. Infomações complementares
+                                                </h3>
+                                            </v-col>
                                             <v-col cols="12">
                                                 <v-textarea v-model="agendamento.obervacao_solicitante"
                                                     label="Observações Adcionais" variant="outlined"></v-textarea>

@@ -27,6 +27,44 @@ export async function getFornecedorNomeById(id: number, fornecedorList: Forneced
     return fornecedor ? fornecedor.nome + ' - ' + fornecedor.cnpj_cpf : '';
 }
 
+export function getFornecedorEmpyt() {
+    var fornecedorEmpyt: Fornecedor = {
+        id: 0,
+        nome: '',
+        ativo: false,
+        created_at: new Date(),
+        updated_at: new Date(),
+        user_id_created: null,
+        user_id_updated: null,
+        user_id_deleted: null,
+        motivo_alteracao: null,
+        cnpj_cpf: null,
+        inscricao_estadual: null,
+        endereco: null,
+        numero: null,
+        bairro: null,
+        cep: null,
+        municipio: null,
+        matricula_erp: null,
+        uf: null,
+        permite_agendamento: false
+    };
+    return fornecedorEmpyt;
+
+}
+
+export async function getFornecedorById(id: number): Promise<Fornecedor> {
+
+
+    try {
+        const response = await fetchWrapper.get('cadastros_basicos/fornecedor/' + id);
+        return response;
+    } catch (e) {
+        console.error('Erro ao buscar a lista de fornecedores:', e);
+        return getFornecedorEmpyt();
+    }
+}
+
 export async function getFornecedorList(): Promise<Fornecedor[]> {
     try {
         const response = await fetchWrapper.get('cadastros_basicos/fornecedor');

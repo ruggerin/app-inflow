@@ -1,5 +1,5 @@
-import { AgendamentoAnexo } from './AgendamentoAnexo';
-import { AgendamentoDocumento } from './AgendamentoDocumento';
+import {type AgendamentoAnexo } from './AgendamentoAnexo';
+import {type AgendamentoDocumento } from './AgendamentoDocumento';
 
 export interface Agendamento {
   id: number;
@@ -26,4 +26,18 @@ export interface Agendamento {
   obervacao_solicitante: string | null; // text
   agendamento_documentos: AgendamentoDocumento[];
   agendamento_anexos: AgendamentoAnexo[]; 
+}
+
+export function getAgendamentoEmpyt(): Agendamento {
+  return {
+    id: 0,
+    data_entrega: new Date(),
+    created_at: new Date(),
+    updated_at: new Date(),
+    horario_inicio: null,
+    horario_fim: null,
+    obervacao_solicitante: null,
+    agendamento_documentos: [],
+    agendamento_anexos: []
+  };
 }
