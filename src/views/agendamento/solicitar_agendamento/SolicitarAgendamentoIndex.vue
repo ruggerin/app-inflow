@@ -7,7 +7,7 @@ import type { Agendamento } from '@/models/Agendamento';
 import { Qalendar } from 'qalendar'; // Certifique-se de que o componente Qalendar está instalado e importado corretamente
 import 'qalendar/dist/style.css'; // Importar o estilo do Qalendar
 
-import { type Fornecedor, getFornecedorList } from '@/models/Fornecedor';
+import type { Fornecedor } from '@/models/Fornecedor';
 
 import UiParentCard from '@/components/shared/UiParentCard.vue';
 import Swal from 'sweetalert2';
@@ -324,8 +324,9 @@ const toggle = ref(0);
                         {{ getFornecedorNomeById(fornecedor_id) }}
                     </template>
                     <template #item-status_id="{ status_id }">
-                        <v-chip :color="getStatusById(status_id).cor_fundo"> {{ getStatusById(status_id).descricao
-                            }}</v-chip>
+                        <v-chip :color="getStatusById(status_id).cor_fundo ?? 'error'">
+                            {{ getStatusById(status_id).descricao }}
+                        </v-chip>
                     </template>
 
                     <template #item-acoes="{ id }">

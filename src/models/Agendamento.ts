@@ -1,5 +1,5 @@
-import {type AgendamentoAnexo } from './AgendamentoAnexo';
-import {type AgendamentoDocumento } from './AgendamentoDocumento';
+import type { AgendamentoAnexo } from './AgendamentoAnexo';
+import type { AgendamentoDocumento } from './AgendamentoDocumento';
 
 export interface Agendamento {
   id: number;

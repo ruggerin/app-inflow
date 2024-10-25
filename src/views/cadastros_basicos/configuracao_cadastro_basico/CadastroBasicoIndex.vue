@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onUnmounted, onMounted } from 'vue';
 import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
-import { type FastForm } from '@/models/FastForms';
+
 import type { Header, Item } from 'vue3-easy-data-table';
 import UiParentCard from '@/components/shared/UiParentCard.vue';
 import 'vue3-easy-data-table/dist/style.css';

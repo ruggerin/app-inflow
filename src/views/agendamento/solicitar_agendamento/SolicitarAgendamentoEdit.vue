@@ -1,24 +1,23 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
-import type { Header, Item } from 'vue3-easy-data-table';
-
 import { useRoute, useRouter } from 'vue-router';
-
 import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
-
 import UiParentCard from '@/components/shared/UiParentCard.vue';
 import Swal from 'sweetalert2';
 import moment from 'moment';
 import type { Agendamento } from '@/models/Agendamento';
+import type { Fornecedor } from '@/models/Fornecedor';
 
-import { type Fornecedor, getFornecedorNomeById, getFornecedorList } from '@/models/Fornecedor';
-import { type AgendamentoDocumento } from '@/models/AgendamentoDocumento';
+import { getFornecedorList } from '@/models/Fornecedor';
+
+import type { AgendamentoDocumento } from '@/models/AgendamentoDocumento';
 
 import 'v-calendar/dist/style.css';
-import { type HorarioDisponivel } from '@/models/AgendamentoJanelas';
-const themeColor = ref('rgb(var(--v-theme-secondary))');
+import type { HorarioDisponivel } from '@/models/AgendamentoJanelas';
+
 import ResumoAgendamento from '../ResumoAgendamento.vue';
 
+const themeColor = ref('rgb(var(--v-theme-secondary))');
 
 const agendamento = ref<Agendamento>({
     id: 0,
@@ -53,7 +52,7 @@ const fornecedorList = ref<Fornecedor[]>([]);
 const route = useRoute();
 const router = useRouter();
 const anexos = ref<any[]>([]);
-const novoAnexo = ref<File | null>(null);
+const novoAnexo = ref<File[] | null | undefined>(undefined);
 
 function adicionarAnexo() {
     if (novoAnexo.value) {
@@ -350,7 +349,7 @@ const showResumoAgendamento = ref(false);
 function resumoAgendamentoClose() {
     showResumoAgendamento.value = false;
 }
-function finalizar(){
+function finalizar() {
     showResumoAgendamento.value = false;
     Swal.fire({
         title: 'Sucesso',
@@ -367,7 +366,8 @@ function finalizar(){
     <v-dialog v-model="showResumoAgendamento" width="90%" height="100%">
 
 
-        <ResumoAgendamento @finalizar="finalizar" @close="resumoAgendamentoClose" :agendamento="agendamento"></ResumoAgendamento>
+        <ResumoAgendamento @finalizar="finalizar" @close="resumoAgendamentoClose" :agendamento="agendamento">
+        </ResumoAgendamento>
 
 
     </v-dialog>
@@ -691,9 +691,9 @@ function finalizar(){
                                                 <v-divider> </v-divider>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-file-input variant="outlined" v-model="novoAnexo"
+                                                <!-- <v-file-input variant="outlined" v-model="novoAnexo"
                                                     label="Adicionar Anexo" prepend-icon="mdi-paperclip"
-                                                    @change="adicionarAnexo"></v-file-input>
+                                                    @change="adicionarAnexo"></v-file-input> -->
                                             </v-col>
                                             <v-col cols="12">
 

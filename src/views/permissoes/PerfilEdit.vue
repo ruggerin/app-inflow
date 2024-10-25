@@ -4,7 +4,7 @@ import treeview from "vue3-treeview";
 import "vue3-treeview/dist/style.css";
 import UiParentCard from '@/components/shared/UiParentCard.vue';
 import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
-import { type Perfil } from '@/models/Perfil';
+import type { Perfil } from '@/models/Perfil';
 import { useRoute } from 'vue-router';
 import Swal from 'sweetalert2';
 

@@ -1,4 +1,4 @@
-import { type FastFormField} from "./FastFormsFields";
+import type{  FastFormField} from "./FastFormsFields";
 
 export interface FastForm {
     id: number;

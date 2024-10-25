@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 
+import { maska } from 'maska';
+import type { Agendamento } from '@/models/Agendamento';
+import type { Fornecedor} from '@/models/Fornecedor';
 
-import { type Agendamento, getAgendamentoEmpyt } from '@/models/Agendamento';
-import { type Fornecedor, getFornecedorEmpyt, getFornecedorById } from '@/models/Fornecedor';
-import { type StatusAgendamento, getStatusById, getStatusAgendamentoEmpyt } from '@/models/StatusAgendamento';
+import { getFornecedorEmpyt, getFornecedorById } from '@/models/Fornecedor';
+import type {  StatusAgendamento } from '@/models/StatusAgendamento';
+import {  getStatusById, getStatusAgendamentoEmpyt } from '@/models/StatusAgendamento';
 import HoraComponent from './HoraComponent.vue';
 const emits = defineEmits(['refresh']);
 
 
-import { maska } from 'maska';
+
 
 const props = defineProps({
     agendamento: {

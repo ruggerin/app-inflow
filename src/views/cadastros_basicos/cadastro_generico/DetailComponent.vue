@@ -199,26 +199,25 @@ const idOutput = computed(() => {
                         <v-text-field v-if="field.name == 'id'" v-model="idOutput" variant="outlined" label="Código"
                             readonly></v-text-field>
 
-
                         <v-switch v-else-if="field.type == 'boolean'" v-model="field.value" color="success"
                             :label="field.label"></v-switch>
-
 
                         <!-- <v-color-picker v-else-if="field.type =='color' "></v-color-picker> -->
                         <ColorField v-else-if="field.type == 'color'" v-model="field.value"></ColorField>
 
                         <v-text-field v-else-if="field.type == 'number'" variant="outlined" :label="field.label"
-                            v-model="field.value" :readonly="field.readonly"
+                            v-model="field.value" :readonly="field.readonly ?? false"
                             :error-messages="validationErrors[field.name]"></v-text-field>
                         <v-text-field v-else-if="field.type == 'date'" variant="outlined" :label="field.label"
-                            v-model="field.value" :readonly="field.readonly"
+                            v-model="field.value" :readonly="field.readonly ?? false"
                             :error-messages="validationErrors[field.name]"></v-text-field>
                         <v-text-field v-else-if="field.type == 'datetime'" variant="outlined" :label="field.label"
-                            v-model="field.value" :readonly="field.readonly"
+                            v-model="field.value" :readonly="field.readonly ?? false"
                             :error-messages="validationErrors[field.name]"></v-text-field>
                         <v-text-field v-else variant="outlined" :label="field.label" v-model="field.value"
-                            :readonly="field.readonly" :error-messages="validationErrors[field.name]"></v-text-field>
-                      <!--   {{ field.value }} -->
+                            :readonly="field.readonly ?? false"
+                            :error-messages="validationErrors[field.name]"></v-text-field>
+                        <!-- {{ field.value }} -->
                     </v-col>
 
 

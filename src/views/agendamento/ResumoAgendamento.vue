@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import { type Agendamento } from '@/models/Agendamento';
+import type { Agendamento } from '@/models/Agendamento';
 import { fetchWrapper } from "@/utils/helpers/fetch-wrapper";
-import { type Fornecedor, getFornecedorById, getFornecedorEmpyt } from '@/models/Fornecedor';
+import type { Fornecedor} from '@/models/Fornecedor';
+
+import { getFornecedorEmpyt, getFornecedorById } from '@/models/Fornecedor';
 import PrintTextComponent from './PrintTextComponent.vue';
 import moment from 'moment';
 import Swal from 'sweetalert2';

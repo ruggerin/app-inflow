@@ -1,35 +1,16 @@
 <script lang="ts" setup>
 import { ref, defineEmits } from 'vue';
 import type { Agendamento } from '@/models/Agendamento';
+import { getAgendamentoEmpyt } from '@/models/Agendamento';
 import moment from 'moment';
 
 const emit = defineEmits(['closeDialog']);
 
 const btnSubmitLoading = ref(false);
 
-const agendamento = ref<Agendamento>({
-    id: 0,
-    data_agendamento: moment().toDate(),
-    data_entrega: new Date(),
-    periodo_dia: null,
-    horario: null,
-    status_id: null,
-    tipo_agendamento: null,
-    volume_total: null,
-    quantidade_total: null,
-    fornecedor_id: null,
-    pedido_id: null,
-    doca_id: null,
-});
+const agendamento = ref<Agendamento>(getAgendamentoEmpyt());
 
-// Introduzindo um erro deliberado ao montar o componente
-const nonExistentFunction = () => {
-    // Tentar acessar uma propriedade inexistente
-    const error = agendamento.value.nonExistentProperty.toString();
-};
 
-// Chamar a função que introduz o erro
-nonExistentFunction();
 
 async function submit() {
     btnSubmitLoading.value = true;
@@ -72,7 +53,7 @@ function dialogClose() {
                         <v-select v-model="agendamento.periodo_dia" :items="['MANHÃ', 'TARDE', 'NOITE']" variant="outlined" label="Período do Dia"></v-select>
                     </v-col>
                     <v-col cols="4">
-                        <v-text-field v-model="agendamento.horario" variant="outlined" label="Horário" type="time"></v-text-field>
+                        <v-text-field v-model="agendamento.horario_inicio" variant="outlined" label="Horário" type="time"></v-text-field>
                     </v-col>
                     <v-col cols="4">
                         <v-text-field v-model="agendamento.status_id" variant="outlined" label="Status ID" type="number"></v-text-field>

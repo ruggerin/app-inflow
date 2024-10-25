@@ -37,9 +37,12 @@ function filterItems() {
     const searchTerm = search.value.toLowerCase();
     return items.value.filter((item) => {
         const matchesParent = item.label?.toLowerCase().includes(searchTerm);
-        const matchesChildren = item.children.some((child) =>
-            child.label?.toLowerCase().includes(searchTerm)
-        );
+        var matchesChildren = false;
+        if (item.children) {
+             matchesChildren = item.children.some((child) =>
+                child.label?.toLowerCase().includes(searchTerm)
+            );
+        }
 
         // Retorna true se o pai ou qualquer filho corresponder ao critério de pesquisa
         return matchesParent || matchesChildren;
@@ -165,8 +168,8 @@ function dialogDeleteShow(item: Menu) {
                                     <v-icon icon="mdi-plus"></v-icon>
                                     Novo
                                 </v-btn>
-                                <v-btn color class="ml-3" disabled primary @click="dialogDeleteShow(menuEdit)">
-                                    
+                                <v-btn  class="ml-3" disabled primary @click="dialogDeleteShow(menuEdit)">
+
                                     Aplicar reordenação
                                 </v-btn>
                             </div>

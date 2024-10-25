@@ -7,10 +7,10 @@ import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
 
 import 'vue3-easy-data-table/dist/style.css';
 
-const themeColor = ref('rgb(var(--v-theme-secondary))');
-import { CadastrosBasicosList, getFastForm } from '@/utils/CadastrosBasicosList';
-import { type FastForm } from '@/models/FastForms';
-import type { FastFormField } from '@/models/FastFormsFields';
+
+import {  getFastForm } from '@/utils/CadastrosBasicosList';
+import type { FastForm } from '@/models/FastForms';
+//import type { FastFormField } from '@/models/FastFormsFields';
 import DetailComponent from './DetailComponent.vue';
 import Swal from 'sweetalert2';
 import moment from 'moment';
