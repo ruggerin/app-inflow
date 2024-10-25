@@ -281,12 +281,7 @@ const toggle = ref(0);
                                                 Buscar
                                             </v-btn>
                                         </div>
-                                        <div class="pa-1">
-                                            <v-btn color="success" :to="{ path: '/agendamento/solicitar/novo/editar' }">
-                                                <v-icon>mdi-plus</v-icon>
-                                                Novo
-                                            </v-btn>
-                                        </div>
+
                                     </div>
                                 </v-col>
                             </v-row>
@@ -295,6 +290,20 @@ const toggle = ref(0);
                 </v-expansion-panels>
 
 
+            </v-col>
+            <v-col cols="12" class=" d-flex">
+                <div class="pa-1">
+                    <v-btn color="success" :to="{ path: '/agendamento/solicitar/novo/editar' }">
+                        <v-icon>mdi-plus</v-icon>
+                        Novo agendamento
+                    </v-btn>
+                </div>
+                <div class="pa-1">
+                    <v-btn color="error" :to="{ path: '/agendamento/solicitar/novo/editar' }">
+                        <v-icon>mdi-alert-box</v-icon>
+                        Agendamento de emergência
+                    </v-btn>
+                </div>
             </v-col>
 
             <v-col cols="12" class="d-flex justify-end">
@@ -411,6 +420,6 @@ const toggle = ref(0);
     width: 700px !important;
     top: 50% !important;
     left: 50% !important;
-    transform: translate(-50%, -50%)!important;
+    transform: translate(-50%, -50%) !important;
 }
 </style>

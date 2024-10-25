@@ -337,21 +337,38 @@ watch(() => janelaIndex.value, (newValue) => {
         }
     }
 },);
-
+function totalVolumes() {
+    let total: number = 0;
+    for (let item_doc of agendamento.value.agendamento_documentos) {
+        if (item_doc.volumes)
+            total += Number(item_doc.volumes);
+    }
+    return total;
+}
 const showResumoAgendamento = ref(false);
 
 function resumoAgendamentoClose() {
     showResumoAgendamento.value = false;
 }
+function finalizar(){
+    showResumoAgendamento.value = false;
+    Swal.fire({
+        title: 'Sucesso',
+        text: 'Agendamento solicitado com sucesso, aguarde a aprovação',
+        icon: 'success',
+        confirmButtonText: 'OK'
+    });
+    router.push({ path: '/agendamento/solicitar' });
+}
 // Exibir o erro no template
 </script>
 
 <template>
-    <v-dialog v-model="showResumoAgendamento">
+    <v-dialog v-model="showResumoAgendamento" width="90%" height="100%">
 
-        <div class="d-flex justify-center align-center" style="height: 100vh;">
-            <ResumoAgendamento @close="resumoAgendamentoClose" height="80vh" centered width="50%" :agendamento="agendamento"></ResumoAgendamento>
-        </div>
+
+        <ResumoAgendamento @finalizar="finalizar" @close="resumoAgendamentoClose" :agendamento="agendamento"></ResumoAgendamento>
+
 
     </v-dialog>
     <v-row>
@@ -546,6 +563,7 @@ function resumoAgendamentoClose() {
                                                             <th>Num. Nota</th>
                                                             <th>Série</th>
                                                             <th>Chave</th>
+                                                            <th>Volumes</th>
                                                             <th>Ação</th>
                                                         </tr>
                                                     </thead>
@@ -557,6 +575,7 @@ function resumoAgendamentoClose() {
                                                             <td>{{ item_doc.numnota }}</td>
                                                             <td>{{ item_doc.serie }}</td>
                                                             <td>{{ item_doc.chave_nf }}</td>
+                                                            <td>{{ item_doc.volumes }}</td>
                                                             <td><v-btn @click="documentRemove(item_doc)" color="error"
                                                                     variant="text"><v-icon>mdi-delete-circle</v-icon></v-btn>
                                                             </td>
@@ -566,6 +585,12 @@ function resumoAgendamentoClose() {
 
                                                     </tbody>
                                                 </v-table>
+                                            </v-col>
+                                            <v-col cols="12" class="d-flex flex-column justify-end">
+                                                <div><strong>Total Volumes:</strong> {{ totalVolumes() }}</div>
+                                                <div><strong>Total Documentos:</strong> {{
+                                                    agendamento.agendamento_documentos.length }}
+                                                </div>
                                             </v-col>
                                         </v-row>
                                     </v-window-item>

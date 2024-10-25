@@ -5,6 +5,7 @@ import { fetchWrapper } from "@/utils/helpers/fetch-wrapper";
 import { type Fornecedor, getFornecedorById, getFornecedorEmpyt } from '@/models/Fornecedor';
 import PrintTextComponent from './PrintTextComponent.vue';
 import moment from 'moment';
+import Swal from 'sweetalert2';
 
 const props = defineProps({
     agendamento: {
@@ -13,11 +14,13 @@ const props = defineProps({
     }
 });
 
-const emits = defineEmits(['close']);
+const emits = defineEmits(['close', 'finalizar']);
 
 function closeDialog() {
-  emits('close');
+    emits('close');
 }
+
+
 const forcedorDetalhe = ref<Fornecedor>(getFornecedorEmpyt());
 
 onMounted(async () => {
@@ -26,32 +29,41 @@ onMounted(async () => {
     }
 
 });
- 
+
 
 
 function totalVolumes() {
     let total = 0;
     for (let item_doc of props.agendamento.agendamento_documentos) {
         if (item_doc.volumes)
-            total += item_doc.volumes;
+            total += Number(item_doc.volumes);
     }
     return total;
 }
 const confirmarAgendamentoLoading = ref(false);
 
-function confirmarAgendamento() {
+
+async function confirmarAgendamento() {
     confirmarAgendamentoLoading.value = true;
 
-    let form  = props.agendamento;
+    let form = props.agendamento;
     form.volume_total = totalVolumes();
-    fetchWrapper.post('agendamento/solicitar',props.agendamento)
+    await fetchWrapper.post('agendamento/solicitar', props.agendamento)
         .then(() => {
             confirmarAgendamentoLoading.value = false;
             closeDialog();
         })
-        .catch(() => {
+        .catch((e) => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro ao confirmar agendamento',
+                text: e.message
+            });
             confirmarAgendamentoLoading.value = false;
         });
+    confirmarAgendamentoLoading.value = false;
+    emits('finalizar');
+
 }
 
 
@@ -64,10 +76,10 @@ const confirmacaoInfo = ref(false);
             <v-spacer></v-spacer>
             <v-btn icon @click="closeDialog">
                 <v-icon>mdi-close</v-icon>
-                </v-btn>
+            </v-btn>
         </v-toolbar>
         <!--   <pre>{{ agendamento }}</pre> -->
-        <v-card-text>
+        <v-card-text style=" position: relative;">
             <v-row class="scrollable-row">
                 <v-col cols="12">
                     <h4>DETALHES DO FORNECEDOR</h4>
@@ -102,16 +114,19 @@ const confirmacaoInfo = ref(false);
                     <h4>DETALHES DO AGENDAMENTO</h4>
                 </v-col>
                 <v-col cols="3">
-                    <PrintTextComponent :aligment="'center'" label="DATA" :text="moment(agendamento.data_entrega).format('DD/MM/YYYY')" />
+                    <PrintTextComponent :aligment="'center'" label="DATA"
+                        :text="moment(agendamento.data_entrega).format('DD/MM/YYYY')" />
                 </v-col>
                 <v-col cols="3">
-                    <PrintTextComponent :aligment="'center'" label="HORA INICIAL" :text="(agendamento.horario_inicio)" />
+                    <PrintTextComponent :aligment="'center'" label="HORA INICIAL"
+                        :text="(agendamento.horario_inicio)" />
                 </v-col>
                 <v-col cols="3">
                     <PrintTextComponent :aligment="'center'" label="HORA FINAL" :text="(agendamento.horario_fim)" />
                 </v-col>
                 <v-col cols="3">
-                    <PrintTextComponent :aligment="'center'" label="TOTAL DE VOLUMES" :text="totalVolumes().toString()" />
+                    <PrintTextComponent :aligment="'center'" label="TOTAL DE VOLUMES"
+                        :text="totalVolumes().toString()" />
                 </v-col>
                 <v-col cols="12">
                     <v-divider></v-divider>
@@ -160,9 +175,10 @@ const confirmacaoInfo = ref(false);
                     label="Declaro que as informações acima estão corretas e que estou ciente da política de agendamento"></v-checkbox>
 
 
-                <v-col cols="12 d-flex justify-center" >
-                    
-                    <v-btn color="primary" @click="confirmarAgendamento" :disabled="!confirmacaoInfo">Confirmar
+                <v-col cols="12 d-flex justify-center">
+
+                    <v-btn :loading="confirmarAgendamentoLoading" color="primary" @click="confirmarAgendamento"
+                        :disabled="!confirmacaoInfo">Confirmar
                         Agendamento</v-btn>
                 </v-col>
 
@@ -175,7 +191,10 @@ const confirmacaoInfo = ref(false);
 </template>
 <style scoped>
 .scrollable-row {
-    max-height: 400px;
+
+    /*   max-height: 400px;
+    min-height: 80%; */
+    height: 70%;
     /* Defina a altura máxima desejada */
     overflow-y: auto;
     /* Permite rolagem vertical */
