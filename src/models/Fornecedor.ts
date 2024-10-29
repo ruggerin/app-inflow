@@ -22,7 +22,7 @@ export interface Fornecedor {
     permite_agendamento: boolean; // tinyint NOT NULL DEFAULT '1'
 }
 
-export async function getFornecedorNomeById(id: number, fornecedorList: Fornecedor[]): Promise<string> {
+export  function getFornecedorNomeById(id: number, fornecedorList: Fornecedor[]): string {
     const fornecedor = fornecedorList.find(fornecedor => fornecedor.id === id);
     return fornecedor ? fornecedor.nome + ' - ' + fornecedor.cnpj_cpf : '';
 }

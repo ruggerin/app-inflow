@@ -2,7 +2,7 @@
 import { ref, onMounted, onUpdated } from 'vue';
 import type CFOPItem from './CFOPItemIterface';
 import type Cabecalho from './LivrofiscalCabecalho';
-import { dinheiroReal, percentual } from '@/utils/helpers/formatNumberBrazuca';
+import { dinheiroReal, percentual } from '@/utils/helpers/formatNumberBr';
 import CardValores from './CardValores.vue';
 // common components
 import UiChildCard from '@/components/shared/UiChildCard.vue';

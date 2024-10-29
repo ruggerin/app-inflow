@@ -26,6 +26,12 @@ export interface Agendamento {
   obervacao_solicitante: string | null; // text
   agendamento_documentos: AgendamentoDocumento[];
   agendamento_anexos: AgendamentoAnexo[]; 
+  transportador_id?: number | null; // bigint unsigned DEFAULT NULL
+  veiculo_id?: number | null; // bigint unsigned DEFAULT NULL
+  motorista_id?: number | null; // bigint unsigned DEFAULT NULL ,
+
+  rejeicao_motivo?: string | null; // varchar(255) DEFAULT NULL
+
 }
 
 export function getAgendamentoEmpyt(): Agendamento {

@@ -6,7 +6,7 @@
 import { ref, onMounted, onUpdated } from 'vue';
 import UiChildCard from '@/components/shared/UiChildCard.vue';
 
-import { dinheiroReal, percentual } from '@/utils/helpers/formatNumberBrazuca';
+import { dinheiroReal, percentual } from '@/utils/helpers/formatNumberBr';
 
 
 const props = defineProps({

@@ -72,9 +72,17 @@ const MainRoutes = {
       path: '/agendamento/solicitar/:id/editar',
       component: () => import('@/views/agendamento/solicitar_agendamento/SolicitarAgendamentoEdit.vue')
     },
+    {
+      name: 'agendamento-dashboard',
+      path: '/agendamento/dashboard',
+      component: () => import('@/views/agendamento/dashboard/AgendamentoDashboard.vue')
 
-
-
+    },
+    {
+      name: 'agendamento-aprovacao',
+      path: 'agendamento/aprovacao',
+      component: () => import('@/views/agendamento/aprovacao_agendamento/AprovacaoAgendamento.vue')
+    },
 
     {
       name: 'cadastro-basico-config',
@@ -100,6 +108,11 @@ const MainRoutes = {
       path: '/parametros/menus',
       component: () => import('@/views/cadastros_basicos/menu/CadastroMenu.vue')
     },
+    {
+      name: 'parametros-edicao',
+      path: '/parametros/editar',
+      component: () => import('@/views/parametros/ParametrosIndex.vue')
+    }
 
 
 

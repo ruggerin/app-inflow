@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import moment from 'moment'
 import UiChildCard from '@/components/shared/UiChildCard.vue';
 
-import { dinheiroReal, percentual } from '@/utils/helpers/formatNumberBrazuca';
+import { dinheiroReal, percentual } from '@/utils/helpers/formatNumberBr';
 // icons
 import { CalendarEventIcon, DeviceMobileIcon, MailIcon } from 'vue-tabler-icons';
 

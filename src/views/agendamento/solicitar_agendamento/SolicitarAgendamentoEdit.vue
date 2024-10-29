@@ -225,7 +225,7 @@ const botaoNavegacaoTexto = ref('Próximo');
 function botaoNavegacaoAcao() {
     console.log(tab.value);
 
-    if (tab.value < 3) {
+    if (tab.value < 4) {
         avancarAction();
     }
     else {
@@ -416,6 +416,16 @@ function finalizar() {
                                         </div>
                                     </v-tab>
                                     <v-tab @click="changeTab(3)" rounded="md" class="mb-3 text-left overflow-hidden"
+                                        height="70">
+                                        <v-icon class="v-icon--start"
+                                            rounded="md">mdi-truck-cargo-container</v-icon>
+                                        <div>
+                                            <div>Informações do transporte</div>
+                                            <span class="text-subtitle-2 text-disabled font-weight-medium d-block">
+                                            </span>
+                                        </div>
+                                    </v-tab>
+                                    <v-tab @click="changeTab(4)" rounded="md" class="mb-3 text-left overflow-hidden"
                                         height="70">
                                         <v-icon class="v-icon--start"
                                             rounded="md">mdi-file-document-edit-outline</v-icon>
@@ -677,6 +687,9 @@ function finalizar() {
                                         </v-row>
                                     </v-window-item>
                                     <v-window-item :value="3">
+                                        
+                                    </v-window-item>
+                                    <v-window-item :value="4">
                                         <v-row class="mt-10">
                                             <v-col cols=12>
                                                 <h3 class="text-primary">

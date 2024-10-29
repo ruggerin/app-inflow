@@ -1,5 +1,13 @@
 import { DateTime } from 'luxon';
 
+export function formatDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().length === 1 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1).toString();
+  const day = date.getDate().toString().length === 1 ? '0' + date.getDate() : date.getDate().toString();
+  return `${year}-${month}-${day}`;
+}
+
+
 export function compareDates(date: string): string {
   const currentDateTime = DateTime.now();
 
@@ -29,4 +37,6 @@ export function compareDates(date: string): string {
   }else{
     return 'date'
   }
+
+
 }
