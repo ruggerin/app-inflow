@@ -2,7 +2,7 @@
     <v-row>
 
         <v-dialog v-model="dialogEdit">
-            <FormEditComponent @closeDialog="closeDialogEdit()"></FormEditComponent>
+            
 
         </v-dialog>
         <v-col cols="12" lg="12" sm="12">
@@ -48,7 +48,6 @@ import { reactive, ref } from 'vue';
 import 'v-calendar/style.css';
 import BaseBreadcrumb from '@/components/shared/BaseBreadcrumb.vue';
 import UiParentCard from '@/components/shared/UiParentCard.vue';
-import FormEditComponent from './FormEditComponent.vue';
 
 
 
