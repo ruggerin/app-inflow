@@ -21,6 +21,7 @@ import * as ss from 'simple-statistics'; // Importa todas as funções de simple
 import AgendamentoDetalhe from '../AgendamentoDetalhe.vue';
 
 
+
 const agendamentos = ref<Agendamento[]>([]);
 const fornecedorList = ref<Fornecedor[]>([]);
 const statusList = ref<StatusAgendamento[]>([]);

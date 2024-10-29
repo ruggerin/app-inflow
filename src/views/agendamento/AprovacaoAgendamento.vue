@@ -12,6 +12,7 @@ import type { StatusAgendamento } from '@/models/StatusAgendamento';
 
 import { formatDate } from '@/utils/helpers/dateUtils';
 import { getFornecedorNomeById } from '@/models/Fornecedor';
+import AgendamentoDetalhe from './AgendamentoDetalhe.vue';
 
 const themeColor = ref('rgb(var(--v-theme-secondary))');
 
@@ -34,7 +35,7 @@ onMounted(async () => {
     getStatus();
 });
 function carregarDados() {
-    fetchWrapper.get('agendamento').then((response) => {
+    fetchWrapper.get('agendamento/index', { status_id: 1 }).then((response) => {
         agendamentoList.value = response;
     });
 }
