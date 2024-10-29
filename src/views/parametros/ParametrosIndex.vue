@@ -65,7 +65,7 @@ onMounted(() => {
     carregarDados();
 });
 
-function cancelarAgendamento(){
+function cancelarAgendamento() {
     Swal.fire({
         title: 'Cancelar agendamento',
         text: 'Deseja cancelar o agendamento?',
@@ -81,7 +81,7 @@ function cancelarAgendamento(){
 }
 function dicaControleShow(text_1: string, text_2?: string) {
     Swal.fire({
-      
+
         html: text_1 + '<br><br>' + text_2,
         icon: 'info',
         confirmButtonText: 'OK'
@@ -126,14 +126,14 @@ const search = ref('');
                                         <th style="width: 50%;">Valor</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody v-if="parametroList">
                                     <tr v-for="item in parametroList" :key="item.id">
                                         <td>{{ item.descricao }}
-                                            <v-btn variant="text" color="secondary" icon size="small"
-                                                @click="dicaControleShow(item.texto_ajuda, 'Tipo de dados: '+item.tipo)">
+                                            <v-btn v-if="item.texto_ajuda" variant="text" color="secondary" icon
+                                                size="small"
+                                                @click="dicaControleShow(item.texto_ajuda || '', 'Tipo de dados: ' + item.tipo)">
                                                 <v-icon>mdi-help-circle</v-icon>
                                             </v-btn>
-
                                         </td>
                                         <td>
 
