@@ -81,7 +81,7 @@ const MainRoutes = {
     {
       name: 'agendamento-aprovacao',
       path: 'agendamento/aprovacao',
-      component: () => import('@/views/agendamento/aprovacao_agendamento/AprovacaoAgendamento.vue')
+      component: () => import('@/views/agendamento/AprovacaoAgendamento.vue')
     },
 
     {
