@@ -62,6 +62,7 @@ async function confirmarAgendamento() {
             });
         })
         .catch((e) => {
+            console.log(e);
             Swal.fire({
                 icon: 'error',
                 title: 'Erro ao confirmar agendamento',
