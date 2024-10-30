@@ -347,6 +347,7 @@ function totalVolumes() {
 const showResumoAgendamento = ref(false);
 
 function resumoAgendamentoClose() {
+    console.log('close');
     showResumoAgendamento.value = false;
 }
 function finalizar() {

@@ -50,30 +50,52 @@ async function confirmarAgendamento() {
 
     let form = props.agendamento;
     form.volume_total = totalVolumes();
-    await fetchWrapper.post('agendamento/solicitar', props.agendamento)
-        .then((response) => {
-            confirmarAgendamentoLoading.value = false;
-            Swal.fire({
-                icon: 'success',
-                title: 'Agendamento confirmado com sucesso',
-                text: response.message
-            }).then(() => {
-                closeDialog();
-            });
-        })
-        .catch((e) => {
-            console.log(e);
+
+    try {
+        const response = await fetchWrapper.post('agendamento/solicitar', form);
+        confirmarAgendamentoLoading.value = false;
+        Swal.fire({
+            icon: 'success',
+            title: 'Agendamento confirmado com sucesso',
+            text: response.message
+        }).then(() => {
+            closeDialog();
+        });
+    } catch (e: any) {
+        console.log('Erro ao confirmar agendamento');
+       /*  console.log(e);
+        console.log(e.data.error); */
+        confirmarAgendamentoLoading.value = false;
+       
+        closeDialog();
+
+        if (e.data.error && e.status === 422 && e.data && typeof e.data.messages === 'object') {
+            // Montando uma mensagem detalhada dos erros de validação
+            const errorMessages = Object.entries(e.data.messages)
+                .map(([field, messages]) => {
+                    if (Array.isArray(messages)) {
+                        return `${field}: ${messages.join(', <br> ')}`;
+                    }
+                    return `"${field}": ${messages}`;
+                })
+                .join('\n');
+
             Swal.fire({
                 icon: 'error',
                 title: 'Erro ao confirmar agendamento',
-                text: e.message
+               html: `Os campos abaixo não foram preenchidos corretamente:<br>${errorMessages}`
             });
-            confirmarAgendamentoLoading.value = false;
-        });
-    confirmarAgendamentoLoading.value = false;
-    //  emits('finalizar');
-
+        } else {
+            // Tratamento para outros tipos de erro
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro ao confirmar agendamento',
+                text: e.data.error ?? 'Erro desconhecido'
+            });
+        }
+    }
 }
+
 
 
 const confirmacaoInfo = ref(false);

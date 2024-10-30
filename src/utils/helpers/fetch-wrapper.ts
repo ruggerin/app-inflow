@@ -66,12 +66,13 @@ function handleResponse(response: any) {
       }
 
       const error = (data && data.message) || response.statusText;
-      return Promise.reject({
-        responseStatus: response.status,
-        message: data.message,
-        statusText: response.statusText
+     // return Promise.reject(data);
+     return Promise.reject({
+        status: response.status,
+        data: data,
+        statusText: response.statusText,
 
-      });
+      }); 
     }
 
     return data;
