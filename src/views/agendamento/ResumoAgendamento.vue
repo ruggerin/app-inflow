@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import type { Agendamento } from '@/models/Agendamento';
 import { fetchWrapper } from "@/utils/helpers/fetch-wrapper";
-import type { Fornecedor} from '@/models/Fornecedor';
+import type { Fornecedor } from '@/models/Fornecedor';
 
 import { getFornecedorEmpyt, getFornecedorById } from '@/models/Fornecedor';
 import PrintTextComponent from './PrintTextComponent.vue';
@@ -51,9 +51,15 @@ async function confirmarAgendamento() {
     let form = props.agendamento;
     form.volume_total = totalVolumes();
     await fetchWrapper.post('agendamento/solicitar', props.agendamento)
-        .then(() => {
+        .then((response) => {
             confirmarAgendamentoLoading.value = false;
-            closeDialog();
+            Swal.fire({
+                icon: 'success',
+                title: 'Agendamento confirmado com sucesso',
+                text: response.message
+            }).then(() => {
+                closeDialog();
+            });
         })
         .catch((e) => {
             Swal.fire({
@@ -64,7 +70,7 @@ async function confirmarAgendamento() {
             confirmarAgendamentoLoading.value = false;
         });
     confirmarAgendamentoLoading.value = false;
-    emits('finalizar');
+    //  emits('finalizar');
 
 }
 
