@@ -11,10 +11,9 @@ const fastForm = ref<FastForm>();
 const searchTerm = ref('');
 const selectedId = ref<number | null>(null);
 
-const props = defineProps<{ controller_name: string, label: string, subtitle?: string, itemId: any, exibir_botao_add?: boolean, density?: string }>();
+const props = defineProps<{ controller_name: string, label: string, subtitle?: string, itemId: any, exibir_botao_add?: boolean, density?: 'default' | 'comfortable' | 'compact'}>();
 
-const density = ref('default');
-
+const density = ref<'default' | 'comfortable' | 'compact'>('default');
 async function getList() {
 
     await fetchWrapper.get('cadastros_basicos/' + props.controller_name).then((response) => {

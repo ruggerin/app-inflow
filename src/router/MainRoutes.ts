@@ -55,7 +55,8 @@ const MainRoutes = {
       name: 'cadastro-generico',
       props: true,
       path: '/cadastro/basico/:controller_name',
-      component: () => import('@/views/cadastros_basicos/cadastro_generico/CadastroRapidoCrud.vue')
+      component: () => import('@/components/cadastro_generico/CadastroRapidoCrud.vue')
+      //component: () => import('@/views/cadastros_basicos/cadastro_generico/CadastroRapidoCrud.vue')
     },
     {
       name: 'recebimento-agendamento',
