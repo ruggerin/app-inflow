@@ -30,7 +30,7 @@ async function submit() {
     await setTimeout(() => {
         btnSubmitLoading.value = false;
     }, 2000);
-   // alert('Erro ao processar operação, código do erro: 500');
+
 }
 
 function dialogClose() {
@@ -38,11 +38,6 @@ function dialogClose() {
 }
 
 function getAgendamento(agendamento_id: number) {
-
-
-
-
-
     fetchWrapper.get('agendamento/show/' + agendamento_id).then((response) => {
         console.log(response);
         agendamento.value = response;
@@ -55,8 +50,6 @@ function getAgendamento(agendamento_id: number) {
 onMounted(async () => {
     if (props.agendamento_id && props.agendamento_id > 0) {
         await getAgendamento(props.agendamento_id);
-
-
     }
 
     docasList.value = await getDocasList();

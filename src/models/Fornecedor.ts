@@ -57,7 +57,7 @@ export async function getFornecedorById(id: number): Promise<Fornecedor> {
 
 
     try {
-        const response = await fetchWrapper.get('cadastros_basicos/fornecedor/' + id);
+        const response = await fetchWrapper.get(`cadastros_basicos/fornecedor/${id}`);
         return response;
     } catch (e) {
         console.error('Erro ao buscar a lista de fornecedores:', e);

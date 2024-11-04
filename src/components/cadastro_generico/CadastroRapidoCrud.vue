@@ -183,7 +183,7 @@ function closeEdit() {
       </v-col>
       <v-col cols="12" lg="4">
         <v-btn @click="openEdit(0)" color="primary">Novo</v-btn>
-        <v-btn @click="getList()" variant="text" color="primary"><v-icon>mdi-refresh</v-icon> Autualizar</v-btn>
+        <v-btn @click="getList()" variant="text" color="primary"><v-icon>mdi-refresh</v-icon> Atualizar</v-btn>
       </v-col>
       <v-col cols="12" lg="12">
 

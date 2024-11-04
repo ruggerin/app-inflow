@@ -10,6 +10,7 @@ import { formatDate } from '@/utils/helpers/dateUtils';
 import type { Fornecedor } from '@/models/Fornecedor';
 import { getFornecedorList } from '@/models/Fornecedor';
 import type { StatusAgendamento } from '@/models/StatusAgendamento';
+import moment from 'moment';
 import Swal from 'sweetalert2';
 import { getFornecedorEmpyt, getFornecedorById, getFornecedorNomeById } from '@/models/Fornecedor';
 
@@ -118,6 +119,10 @@ function fornecedorSelectProps(item: any) {
 }
 
 
+function agendamentoPorDoca(doca_id: number) {
+    return agendamentos.value.filter((agendamento) => agendamento.doca_id == doca_id);
+}
+
 
 function resumPorStatus() {
     return _.chain(agendamentos.value)
@@ -136,7 +141,7 @@ function resumoVolumesDias() {
         .groupBy('data_entrega')
         .map((agendamentos, data_entrega) => ({
             data_entrega,
-            total: agendamentos.length
+            total_volume: _.sumBy(agendamentos, 'volume_total')
         }))
         .value();
 }
@@ -146,7 +151,7 @@ const lineChartVolumesDias = computed(() => {
         series: [
             {
                 name: 'Volumes',
-                data: resumoVolumesDias().map((item) => item.total)
+                data: resumoVolumesDias().map((item) => item.total_volume)
             }
         ]
     }
@@ -280,7 +285,8 @@ function closeDialogAgendamento() {
 </script>
 <template>
     <v-dialog v-model="dialogDetalheAgendamento">
-        <AgendamentoDetalhe @closeDialog="closeDialogAgendamento" :agendamento_id="dialogAgendamentoId"></AgendamentoDetalhe>
+        <AgendamentoDetalhe @closeDialog="closeDialogAgendamento" :agendamento_id="dialogAgendamentoId">
+        </AgendamentoDetalhe>
     </v-dialog>
     <v-row>
         <v-col cols="12">
@@ -373,8 +379,25 @@ function closeDialogAgendamento() {
                     <small class="headline">Próximos recebimentos #{{ doca.nome }}</small>
                 </v-card-title>
                 <v-card-text>
+                    <v-list>
+                        <v-list-item v-for="(item, i) in agendamentoPorDoca(doca.id)" :key="i" :value="item"
+                            color="primary">
+                            <v-list-item-title>
 
-                    
+                                {{ moment(item.data_entrega).format('DD/MM/YYYY') }} - {{ item.horario_inicio }} - {{
+                                    item.horario_fim }}
+                            </v-list-item-title>
+                            <v-list-item-subtitle v-if="item.fornecedor_id">
+                                {{ getFornecedorNomeById(item.fornecedor_id, fornecedorList) }} 
+                            </v-list-item-subtitle>
+                            <v-list-item-subtitle >
+                                {{ item.volume_total }} Volumes, {{ item.quantidade_total }} Items
+                            </v-list-item-subtitle>
+
+                        </v-list-item>
+                    </v-list>
+
+
                 </v-card-text>
             </v-card>
         </v-col>
@@ -408,8 +431,7 @@ function closeDialogAgendamento() {
                                             </template>
 
                                             <template #item-acoes="{ id }">
-                                                <v-btn @click="openDialogAgendamento(id)" icon
-                                                    variant="text">
+                                                <v-btn @click="openDialogAgendamento(id)" icon variant="text">
                                                     <EditIcon size="20" />
                                                 </v-btn>
 

@@ -67,15 +67,15 @@ onMounted(() => {
 
 function cancelarAgendamento() {
     Swal.fire({
-        title: 'Cancelar agendamento',
-        text: 'Deseja cancelar o agendamento?',
+        title: 'Cancelar cadastro',
+        text: 'Deseja cancelar o cadastro?',
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Sim',
         cancelButtonText: 'Não',
     }).then((result) => {
         if (result.isConfirmed) {
-            console.log('Cancelar agendamento');
+            window.location.reload();
         }
     });
 }
@@ -159,9 +159,9 @@ const search = ref('');
                                 <v-icon>mdi-content-save</v-icon>
                                 Salvar
                             </v-btn>
-                            <v-btn color="primary" @click="cancelarAgendamento" :loading="salvarBtnLoading">
-                                <v-icon>mdi-content-save</v-icon>
-                                Cancelar agendamento
+                            <v-btn color="secondary" variant="text" @click="cancelarAgendamento" :loading="salvarBtnLoading">
+                                <v-icon> mdi-close-circle-outline</v-icon>
+                                Cancelar
                             </v-btn>
                         </v-col>
                     </v-row>

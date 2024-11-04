@@ -6,6 +6,7 @@ import { maska } from 'maska';
 import Swal from 'sweetalert2';
 import moment from 'moment';
 import ColorField from '@/components/customs/ColorField.vue';
+import SelectComponent from './SelectComponent.vue';
 
 
 
@@ -196,6 +197,7 @@ const idOutput = computed(() => {
                     <v-col cols="10" v-for="field in props.controller_form.fields.filter((campo) => !campo.hidden)"
                         :key="field.id">
 
+
                         <v-text-field v-if="field.name == 'id'" v-model="idOutput" variant="outlined" label="Código"
                             readonly></v-text-field>
 
@@ -205,7 +207,7 @@ const idOutput = computed(() => {
                         <!-- <v-color-picker v-else-if="field.type =='color' "></v-color-picker> -->
                         <ColorField v-else-if="field.type == 'color'" v-model="field.value"></ColorField>
 
-                        <v-text-field v-else-if="field.type == 'number'" variant="outlined" :label="field.label"
+                        <v-text-field v-else-if="field.type == 'number'" type="number" variant="outlined" :label="field.label"
                             v-model="field.value" :readonly="field.readonly ?? false"
                             :error-messages="validationErrors[field.name]"></v-text-field>
                         <v-text-field v-else-if="field.type == 'date'" variant="outlined" :label="field.label"
@@ -214,10 +216,13 @@ const idOutput = computed(() => {
                         <v-text-field v-else-if="field.type == 'datetime'" variant="outlined" :label="field.label"
                             v-model="field.value" :readonly="field.readonly ?? false"
                             :error-messages="validationErrors[field.name]"></v-text-field>
+
+                        <SelectComponent v-else-if="field.type == 'select' && field.colecao_helper != null" v-model:itemId="field.value" :label="field.label"  :controller_name="field.colecao_helper" ></SelectComponent>
+
                         <v-text-field v-else variant="outlined" :label="field.label" v-model="field.value"
                             :readonly="field.readonly ?? false"
                             :error-messages="validationErrors[field.name]"></v-text-field>
-                        <!-- {{ field.value }} -->
+                 
                     </v-col>
 
 

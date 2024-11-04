@@ -13,9 +13,14 @@ import { getFornecedorList } from '@/models/Fornecedor';
 import type { AgendamentoDocumento } from '@/models/AgendamentoDocumento';
 
 import 'v-calendar/dist/style.css';
+
+import type { Transportadora } from '@/models/Transportadora';
 import type { HorarioDisponivel } from '@/models/AgendamentoJanelas';
 
+import SelectComponent from '@/components/cadastro_generico/SelectComponent.vue';
+
 import ResumoAgendamento from '../ResumoAgendamento.vue';
+//import SelectTransportadoraComponent from '@/components/selects/selectTransportadoraComponent.vue';
 
 const themeColor = ref('rgb(var(--v-theme-secondary))');
 
@@ -32,6 +37,7 @@ const agendamento = ref<Agendamento>({
     pedido_id: null,
     doca_id: null,
     created_at: new Date(),
+    transportador_id: null,
     updated_at: new Date(),
     horario_inicio: null,
     horario_fim: null,
@@ -91,12 +97,16 @@ onMounted(async () => {
     }
     await getFornecedores();
     await getDocas();
+    await getTransportadoras();
+
     // await getAllowedDates();
 
 
 });
 
 const docas = ref<Doca[]>([]);
+
+const transportadoraList = ref<Transportadora[]>([]);
 
 interface Doca {
     id: number,
@@ -205,7 +215,16 @@ async function getFornecedores() {
 
     }
 }
+async function getTransportadoras() {
 
+    await fetchWrapper.get('cadastros_basicos/transportadora')
+        .then((response) => {
+            console.log(response);
+
+            transportadoraList.value = response;
+        });
+
+}
 // Manter o restante do seu código...
 async function carregarCadastro() {
     // Sua lógica existente
@@ -418,8 +437,7 @@ function finalizar() {
                                     </v-tab>
                                     <v-tab @click="changeTab(3)" rounded="md" class="mb-3 text-left overflow-hidden"
                                         height="70">
-                                        <v-icon class="v-icon--start"
-                                            rounded="md">mdi-truck-cargo-container</v-icon>
+                                        <v-icon class="v-icon--start" rounded="md">mdi-truck-cargo-container</v-icon>
                                         <div>
                                             <div>Informações do transporte</div>
                                             <span class="text-subtitle-2 text-disabled font-weight-medium d-block">
@@ -688,7 +706,38 @@ function finalizar() {
                                         </v-row>
                                     </v-window-item>
                                     <v-window-item :value="3">
-                                        
+
+                                        <v-row class="ma-2">
+                                            <v-col cols="12">
+                                                <!--  <SelectTransportadoraComponent :transportadoras="transportadoraList"
+                                                    :exibir_botao_add="true"
+                                                    v-model:itemId="agendamento.transportador_id">
+                                                </SelectTransportadoraComponent> -->
+                                                <SelectComponent :exibir_botao_add="true"
+                                                    v-model:itemId="agendamento.transportador_id" label="Transportadora"
+                                                    subtitle="cnpj" :controller_name="'transportadora'">
+                                                </SelectComponent>
+                                            </v-col>
+                                            <v-col cols="12">
+                                                <v-divider> </v-divider>
+                                            </v-col>
+                                            <v-col cols="12">
+                                                <SelectComponent :exibir_botao_add="true"
+                                                    v-model:itemId="agendamento.veiculo_id" label="Veiculo"
+                                                    subtitle="placa" :controller_name="'veiculo'">
+                                                </SelectComponent>
+                                            </v-col>
+                                            <v-col cols="12">
+                                                <v-divider> </v-divider>
+                                            </v-col>
+                                            <v-col cols="12">
+                                                <SelectComponent :exibir_botao_add="true"
+                                                     v-model:itemId="agendamento.veiculo_id" label="Veiculo"
+                                                    subtitle="placa" :controller_name="'veiculo'">
+                                                </SelectComponent>
+                                            </v-col>
+                                        </v-row>
+
                                     </v-window-item>
                                     <v-window-item :value="4">
                                         <v-row class="mt-10">
