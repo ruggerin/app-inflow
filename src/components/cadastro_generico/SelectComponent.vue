@@ -11,7 +11,7 @@ const fastForm = ref<FastForm>();
 const searchTerm = ref('');
 const selectedId = ref<number | null>(null);
 
-const props = defineProps<{ controller_name: string, label: string, subtitle?: string, itemId: any, exibir_botao_add?: boolean, density?: 'default' | 'comfortable' | 'compact'}>();
+const props = defineProps<{ controller_name: string, label: string, subtitle?: string, itemId: any, exibir_botao_add?: boolean, density?: 'default' | 'comfortable' | 'compact' }>();
 
 const density = ref<'default' | 'comfortable' | 'compact'>('default');
 async function getList() {
@@ -30,7 +30,7 @@ async function getList() {
 const emit = defineEmits(['update:itemId']);
 
 watch(selectedId, (newVal) => {
-  emit('update:itemId', newVal);
+    emit('update:itemId', newVal);
 });
 
 onMounted(async () => {
@@ -60,7 +60,7 @@ function marcasSarchead() {
 
 function itemProps(item: any) {
     let sbtitle = item.id;
-    if(props.subtitle){
+    if (props.subtitle) {
         sbtitle = item[props.subtitle];
     }
     return {
@@ -99,15 +99,17 @@ function openEdit() {
 
                         <v-text-field variant="outlined" v-model="searchTerm" density="compact"
                             placeholder="Pesquisar"></v-text-field>
-
-
-
                     </v-list-item>
-
-
 
                     <v-divider class="mt-2"></v-divider>
 
+                </template>
+                <template v-slot:no-data>
+                    <v-list-item>
+                        <v-list-item-content>
+                            <v-list-item-title>Nenhum dado disponível</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
                 </template>
             </v-select>
         </v-col>

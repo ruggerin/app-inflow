@@ -723,7 +723,7 @@ function finalizar() {
                                             </v-col>
                                             <v-col cols="12">
                                                 <SelectComponent :exibir_botao_add="true"
-                                                    v-model:itemId="agendamento.veiculo_id" label="Veiculo"
+                                                    v-model:itemId="agendamento.veiculo_id" label="Veículo"
                                                     subtitle="placa" :controller_name="'veiculo'">
                                                 </SelectComponent>
                                             </v-col>
@@ -732,8 +732,8 @@ function finalizar() {
                                             </v-col>
                                             <v-col cols="12">
                                                 <SelectComponent :exibir_botao_add="true"
-                                                     v-model:itemId="agendamento.veiculo_id" label="Veiculo"
-                                                    subtitle="placa" :controller_name="'veiculo'">
+                                                     v-model:itemId="agendamento.motorista_id" label="Motorista"
+                                                     :controller_name="'motorista'">
                                                 </SelectComponent>
                                             </v-col>
                                         </v-row>
