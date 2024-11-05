@@ -106,9 +106,9 @@ function openEdit() {
                 </template>
                 <template v-slot:no-data>
                     <v-list-item>
-                        <v-list-item-content>
-                            <v-list-item-title>Nenhum dado disponível</v-list-item-title>
-                        </v-list-item-content>
+
+                        <v-list-item-title>Nenhum dado disponível</v-list-item-title>
+
                     </v-list-item>
                 </template>
             </v-select>

@@ -366,18 +366,21 @@ function totalVolumes() {
 const showResumoAgendamento = ref(false);
 
 function resumoAgendamentoClose() {
-    console.log('close');
+
     showResumoAgendamento.value = false;
+
 }
 function finalizar() {
     showResumoAgendamento.value = false;
+    console.log('finalizar');
     Swal.fire({
         title: 'Sucesso',
         text: 'Agendamento solicitado com sucesso, aguarde a aprovação',
         icon: 'success',
         confirmButtonText: 'OK'
+    }).then(() => {
+        router.push({ path: '/agendamento/solicitar' });
     });
-    router.push({ path: '/agendamento/solicitar' });
 }
 // Exibir o erro no template
 </script>
@@ -732,8 +735,8 @@ function finalizar() {
                                             </v-col>
                                             <v-col cols="12">
                                                 <SelectComponent :exibir_botao_add="true"
-                                                     v-model:itemId="agendamento.motorista_id" label="Motorista"
-                                                     :controller_name="'motorista'">
+                                                    v-model:itemId="agendamento.motorista_id" label="Motorista"
+                                                    :controller_name="'motorista'">
                                                 </SelectComponent>
                                             </v-col>
                                         </v-row>

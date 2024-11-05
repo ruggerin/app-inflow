@@ -14,7 +14,7 @@ export const useAuthStore = defineStore({
   }),
   actions: {
     async login(username: string, password: string) {
-     
+
       const user = await fetchWrapper.post(`auth/login`, { email: username, password });
 
       // update pinia state
@@ -27,26 +27,40 @@ export const useAuthStore = defineStore({
     },
     async logout() {
       this.user = null;
-     // await fetchWrapper.post(`auth/logout`, {});
+      // await fetchWrapper.post(`auth/logout`, {});
       localStorage.removeItem('user');
       router.push('/auth/login1');
     },
+
     async checkAuthenticationApi() {
       try {
-        // Fazer a requisição ao servidor para verificar a autenticação
-        var response = await fetchWrapper.post(`auth/me`);
-  
-        if (response.ok) {
-          return true; // Token válido
-        } else {
-          return false; // Token inválido
+        
+        if (this.user == null) {
+          return false;
         }
+        var response = await fetchWrapper.post(`auth/me`);
+        //console.log(response)
+        return true;
+
       } catch (error) {
         console.error('Erro ao verificar autenticação:', error);
         return false; // Erro na requisição
       }
-    }
-  }
+    },
+    async refreshToken() {
+      try {
 
-  
+        const response = await fetchWrapper.post('auth/refresh');
+
+        // Atualize o usuário com o novo access token
+        this.user.access_token = response.access_token;
+        localStorage.setItem('user', JSON.stringify(this.user));
+        //  console.log('Token atualizado com sucesso');
+      } catch (error) {
+
+        console.log(error)
+        throw error;
+      }
+    },
+  }
 });

@@ -19,9 +19,15 @@ const props = defineProps({
 const emits = defineEmits(['close', 'finalizar']);
 
 function closeDialog() {
+    console.log('emitindo close');
     emits('close');
 }
 
+function finalizarProcessoAgendamento() {
+    closeDialog();
+    console.log('emitindo finalizar');
+    emits('finalizar');
+}
 
 const forcedorDetalhe = ref<Fornecedor>(getFornecedorEmpyt());
 
@@ -54,13 +60,8 @@ async function confirmarAgendamento() {
     try {
         const response = await fetchWrapper.post('agendamento/solicitar', form);
         confirmarAgendamentoLoading.value = false;
-        Swal.fire({
-            icon: 'success',
-            title: 'Agendamento confirmado com sucesso',
-            text: response.message
-        }).then(() => {
-            closeDialog();
-        });
+        //closeDialog();
+        finalizarProcessoAgendamento();
     } catch (e: any) {
         console.log('Erro ao confirmar agendamento');
        /*  console.log(e);
