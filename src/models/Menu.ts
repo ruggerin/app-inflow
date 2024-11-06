@@ -1,3 +1,4 @@
+import type{ MenuPermissao } from './MenuPermissoes';
 export interface Menu {
     id: number;
     nome: string;

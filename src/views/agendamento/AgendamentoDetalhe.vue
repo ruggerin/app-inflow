@@ -101,7 +101,7 @@ function submeterAprovacao() {
                 <span style="color:white; font-size: medium;"> {{ statusAgendamentoInicial.descricao }}</span></v-sheet> -->
 
 
-            <v-chip elevated variant="flat" :color="statusAgendamentoInicial.cor_fundo">Status:
+            <v-chip v-if="statusAgendamentoInicial.cor_fundo!=null" elevated variant="flat" :color="statusAgendamentoInicial.cor_fundo">Status:
                 {{ statusAgendamentoInicial.descricao }}</v-chip>
 
 
