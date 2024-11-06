@@ -14,7 +14,7 @@ const fastForm = ref<FastForm>();
 
 const emit = defineEmits(['update:itemId']);
 const selectedId = ref<number | null>(props.itemId ?? null);
-onMounted(async() => {
+onMounted(async () => {
   items.value = props.transportadoras;
   selectedId.value = props.itemId ?? null;
   fastForm.value = await fastFormConstruct('transportadora');
@@ -110,11 +110,8 @@ function openEdit() {
         label="Transportadora" :item-props="itemProps" variant="outlined" props>
         <template v-slot:prepend-item>
           <v-list-item>
-            <v-list-item-content>
-              <v-text-field variant="outlined" v-model="searchTerm" density="compact"
-                placeholder="Pesquisar"></v-text-field>
-
-            </v-list-item-content>
+            <v-text-field variant="outlined" v-model="searchTerm" density="compact"
+              placeholder="Pesquisar"></v-text-field>
 
           </v-list-item>
 

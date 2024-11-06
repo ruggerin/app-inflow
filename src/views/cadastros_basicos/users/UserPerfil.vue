@@ -4,26 +4,29 @@ import type { Header, Item } from 'vue3-easy-data-table';
 
 import { useRoute, useRouter } from 'vue-router';
 
+import { useAuthStore } from '@/stores/auth';
 import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
 import 'vue3-easy-data-table/dist/style.css';
 import UiParentCard from '@/components/shared/UiParentCard.vue';
 import Swal from 'sweetalert2';
 
 const themeColor = ref('rgb(var(--v-theme-secondary))');
-const route = useRoute();
+
+const authStore = useAuthStore();
 const router = useRouter();
 
+const userId = ref(0);
 
 
-const props = defineProps({
-    id: String
-});
+
 
 const show1 = ref(false);
 const loadingBtn = ref(false);
 
 
-
+function goToHome() {
+    router.push({ name: 'home' }); // Substitua 'home' pelo nome da rota para a página inicial
+}
 interface Fornecedores {
     fornecedor_id: number,
     nome?: string,
@@ -44,18 +47,16 @@ interface User {
 
 const titulo = ref('Carregando...')
 onMounted(async () => {
-    if (route.params.id != "novo") {
 
 
-        titulo.value = "Edição de usuário [ " + route.params.id + " ]"
+    titulo.value = "Meu perfil";
+    console.log(authStore)
+    userId.value = authStore.user.user_info.id;
 
-        await getPerfils();
-        await getFornecedores();
-        await carregarCadastro();
-    } else {
+    await getPerfils();
+    await getFornecedores();
+    await carregarCadastro();
 
-        titulo.value = "Cadastro de usuário"
-    }
 
 
 
@@ -94,19 +95,29 @@ function getFornecedores() {
 
 }
 
-function voltarIndex() {
+const alterarSenha = ref(false);
 
-    router.push('/controle-de-acesso/usuarios');
+const confirmacaoSenha = ref('');
 
 
-}
 
+const show2 = ref(false);
+
+const passwordRules = [
+    (v: string) => !!v || 'Senha é obrigatória',
+    (v: string) => v.length >= 8 || 'A senha deve ter pelo menos 8 caracteres'
+];
+
+const confirmacaoSenhaRules = [
+    (v: string) => !!v || 'Confirmação de senha é obrigatória',
+    (v: string) => v === form.value.password || 'As senhas não conferem'
+];
 
 async function carregarCadastro() {
 
     loadingBtn.value = true;
     try {
-        if (route.params.id == '0') {
+        if (userId.value == 0) {
             form.value = {
                 id: 0,
                 nome: '',
@@ -118,7 +129,7 @@ async function carregarCadastro() {
             loadingBtn.value = false;
             return;
         }
-        form.value = await fetchWrapper.get(`users/${route.params.id}/show`);
+        form.value = await fetchWrapper.get(`users/${userId.value}}/show`);
         console.log(form.value)
         loadingBtn.value = false;
     }
@@ -139,7 +150,13 @@ const form = ref<User>({
     perfils: [],
     fornecedores: []
 });
+function validateForm() {
 
+    let validacao =  confirmacaoSenha.value == form.value.password && form.value.password.length >= 8;
+    return validacao;
+
+
+}
 function getPerfilNomeById(id: number) {
     const perfil = perfilList.value.find(perfil => perfil.perfil_id === id);
     return perfil ? perfil.nome : '';
@@ -165,21 +182,18 @@ async function formSubmit() {
 
         loadingBtn.value = true;
         let response = null;
-        if (route.params.id == '0') {
-            response = await fetchWrapper.post(`users/create`, form.value);
-            form.value.id = response.id;
-        } else {
-            response = await fetchWrapper.post(`users/${route.params.id}/update`, form.value);
-        }
+
+        response = await fetchWrapper.post(`users/${userId.value}/update`, form.value);
+
         console.log(response);
-        var id = route.params.id == '0' ? response.id : route.params.id;
+
         loadingBtn.value = false;
         Swal.fire({
             icon: 'success',
             title: 'Sucesso',
             text: 'Cadastro salvo com sucesso!',
         });
-        router.push('/controle-de-acesso/usuarios/' + id + '/editar');
+        goToHome();
     } catch (error) {
         let errorMessage = 'Ocorreu um erro ao salvar o registro. Por favor, tente novamente mais tarde.';
 
@@ -255,6 +269,7 @@ function itemProps(item: any) {
 }
 
 
+
 </script>
 <template>
     <v-row>
@@ -262,36 +277,37 @@ function itemProps(item: any) {
             <v-row justify="center" class="align-center mb-3">
 
                 <v-col lg="8" md="8" sm="12">
-                    <v-text-field required v-model="form.id" disabled variant="outlined" label="Matricula" hide-details
+                    <v-text-field required v-model="form.id" readonly variant="outlined" label="Matricula" hide-details
                         color="primary"></v-text-field>
                 </v-col>
                 <v-col lg="8" md="8" sm="12">
-                    <v-text-field required v-model="form.nome" variant="outlined" label="Nome" hide-details
+                    <v-text-field required v-model="form.nome" readonly variant="outlined" label="Nome" hide-details
                         color="primary"></v-text-field>
                 </v-col>
                 <v-col lg="8" md="8" sm="12">
-                    <v-text-field required v-model="form.email" variant="outlined" label="E-mail" hide-details
+                    <v-text-field required v-model="form.email" readonly variant="outlined" label="E-mail" hide-details
                         color="primary"></v-text-field>
                 </v-col>
+
                 <v-col lg="8" md="8" sm="12">
-                    <v-text-field :required="route.params.id == 'novo'" v-model="form.password" label="Senha"
-                        density="comfortable" variant="outlined" color="primary" hide-details="auto"
-                        :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'"
-                        @click:append="show1 = !show1" class="pwdInput"></v-text-field>
+                    <v-checkbox v-model="alterarSenha" label="Alterar senha" color="primary"></v-checkbox>
                 </v-col>
-                <!-- <v-col lg="8" md="8" sm="12">
-                    <v-file-input
-                        v-model="form.avatar"
-                        accept="image/*"
-                        show-size
-                        @change="onFileChange"
-                        label="Avatar"
-                    ></v-file-input>
-                   
-                    <v-img v-if="form.avatar" :src="URL.createObjectURL(form.avatar)" max-height="200"></v-img>
-         
+                <v-col lg="8" md="8" sm="12" v-if="alterarSenha">
+                    <v-text-field v-model="form.password" label="Senha" density="comfortable" variant="outlined"
+                        color="primary" hide-details="auto" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                        :type="show1 ? 'text' : 'password'" @click:append="show1 = !show1" class="pwdInput"
+                        :rules="passwordRules"></v-text-field>
                 </v-col>
+                <v-col lg="8" md="8" sm="12" v-if="alterarSenha">
+                    <v-text-field v-model="confirmacaoSenha" label="Confirmação de senha" density="comfortable"
+                        variant="outlined" color="primary" hide-details="auto"
+                        :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'" :type="show2 ? 'text' : 'password'"
+                        @click:append="show2 = !show2" class="pwdInput" :rules="confirmacaoSenhaRules"></v-text-field>
+                    <!-- <div><span class="text-error">Senhas não conferem</span></div> -->
+                </v-col>
+                <!-- 
                 -->
+
 
                 <v-col lg="8" md="8" sm="12">
 
@@ -316,24 +332,12 @@ function itemProps(item: any) {
                                     <span v-else> {{ getPerfilNomeById(item.perfil_id) }}</span>
 
                                 </v-col>
-                                <v-col cols="3" class="d-flex align-center justify-center">
-                                    <div style="height: 100%;  margin-top: 15%;">
-                                        <v-btn variant="text" v-if="item.editItem" color="primary" small
-                                            @click="finishEditPerfilItem(item)"><v-icon> mdi-check-bold</v-icon></v-btn>
-                                        <v-btn variant="text" small @click="removerPerfil(item)">
-                                            <v-icon>mdi-delete</v-icon>
-                                        </v-btn>
-                                    </div>
 
-                                </v-col>
                             </v-row>
                         </v-list-item>
 
                     </v-list>
-                    <div class="d-flex align-center justify-center">
-                        <v-btn variant="text" color="secondary"
-                            @click="adcionarPerfil"><v-icon>mdi-plus-circle</v-icon>Adicionar Perfil</v-btn>
-                    </div>
+
                 </v-col>
                 <v-col lg="8" md="8" sm="12">
 
@@ -360,33 +364,20 @@ function itemProps(item: any) {
                                     <span v-else>{{ getFornecedorNomeById(item.fornecedor_id) }}</span>
 
                                 </v-col>
-                                <v-col cols="3" class="d-flex align-center justify-center">
-                                    <div style="height: 100%;  margin-top: 15%;">
-                                        <v-btn variant="text" v-if="item.editItem" color="primary" small
-                                            @click="finishEditFornecedorItem(item)"><v-icon>
-                                                mdi-check-bold</v-icon></v-btn>
-                                        <v-btn variant="text" small @click="removerFornecedor(item)">
-                                            <v-icon>mdi-delete</v-icon>
-                                        </v-btn>
-                                    </div>
 
-                                </v-col>
                             </v-row>
                         </v-list-item>
 
                     </v-list>
-                    <div class="d-flex align-center justify-center">
-                        <v-btn variant="text" color="secondary"
-                            @click="adcionarFornecedor"><v-icon>mdi-plus-circle</v-icon>Adicionar
-                            Fornecedor</v-btn>
-                    </div>
+
                 </v-col>
                 <div class="d-flex justify-center mt-10" style="width: 100%;">
 
-                    <v-btn color="primary" :loading="loadingBtn" @click="formSubmit">Salvar</v-btn>
+                    <v-btn color="primary" :disabled="!validateForm()" :loading="loadingBtn"
+                        @click="formSubmit">Salvar</v-btn>
 
 
-                    <v-btn variant="text" @click="voltarIndex">Cancelar</v-btn>
+                    <v-btn variant="text" @click="goToHome">Cancelar</v-btn>
                 </div>
             </v-row>
 

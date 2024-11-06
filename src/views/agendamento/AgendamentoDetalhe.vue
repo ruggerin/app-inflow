@@ -8,8 +8,10 @@ import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
 import type { Docas } from '@/models/Docas';
 
 import type { StatusAgendamento } from '@/models/StatusAgendamento';
+import { useAuthStore } from '@/stores/auth';
 
-import { getStatusList } from '@/models/StatusAgendamento';
+import { getStatusList, getStatusFromListById, getStatusAgendamentoEmpyt } from '@/models/StatusAgendamento';
+
 import { getDocasList } from '@/models/Docas';
 
 const props = defineProps<{
@@ -21,10 +23,15 @@ const btnSubmitLoading = ref(false);
 
 const agendamento = ref<Agendamento>();
 
+const statusAgendamentoInicial = ref<StatusAgendamento>(getStatusAgendamentoEmpyt());
+
 const docasList = ref<Docas[]>();
 const statusList = ref<StatusAgendamento[]>();
 
+const permissaoAprovar = ref<boolean>(false);
 
+const permisaoAlterar = ref<boolean>(false);
+const permissaoCancelar = ref<boolean>(false);
 async function submit() {
     btnSubmitLoading.value = true;
     await setTimeout(() => {
@@ -47,15 +54,31 @@ function getAgendamento(agendamento_id: number) {
 
 }
 
+function permiteEditar() {
+    return permisaoAlterar.value && agendamento.value && !(agendamento.value.status_id == 1 || agendamento.value.status_id != 4);
+}
+
 onMounted(async () => {
     if (props.agendamento_id && props.agendamento_id > 0) {
         await getAgendamento(props.agendamento_id);
     }
+    permissaoAprovar.value = await useAuthStore().hasPermission('agendamento-aprovar', "aprovar-agendamento");
+    permissaoAprovar.value = await useAuthStore().hasPermission('movimentacao-materiais', "agendamento_alterar");
+    permissaoCancelar.value = await useAuthStore().hasPermission('movimentacao-materiais', "agendamento_cancelar");
 
     docasList.value = await getDocasList();
     statusList.value = await getStatusList();
 
+    if (agendamento.value &&
+        agendamento.value.status_id) {
+        statusAgendamentoInicial.value = await getStatusFromListById(agendamento.value.status_id, statusList.value);
+    }
+
+
+
+
 });
+
 
 
 const statusInicial = ref(0);
@@ -63,50 +86,76 @@ const statusOptions = [
     { value: 2, label: 'Aprovado' },
     { value: 3, label: 'Rejeitado' }
 ];
+
+function submeterAprovacao() {
+    console.log('submeterAprovacao');
+}
 </script>
 
 <template>
-    <v-card>
+    <v-card v-if="agendamento && statusAgendamentoInicial.id != 0">
         <v-toolbar color="primary" dark>
-            <v-toolbar-title>Agendamento</v-toolbar-title>
+            <v-toolbar-title>Agendamento #{{ agendamento.id }}</v-toolbar-title>
             <v-spacer></v-spacer>
+            <!-- <v-sheet height="80%" class="pa-3" elevation="0" rounded :color="statusAgendamentoInicial.cor_fundo">
+                <span style="color:white; font-size: medium;"> {{ statusAgendamentoInicial.descricao }}</span></v-sheet> -->
+
+
+            <v-chip elevated variant="flat" :color="statusAgendamentoInicial.cor_fundo">Status:
+                {{ statusAgendamentoInicial.descricao }}</v-chip>
+
+
             <v-btn :loading="btnSubmitLoading" @click="submit()">Salvar</v-btn>
+
             <v-btn size="small" color="white" icon @click="dialogClose()">
                 <v-icon>mdi-close</v-icon>
             </v-btn>
         </v-toolbar>
+        <v-card-text>
 
+            <v-card class="" variant="outlined" v-if="statusInicial == 1 && agendamento && permissaoAprovar == true">
 
-        <v-card-text v-if="statusInicial == 1 && agendamento">
+                <v-card-title>
 
-            <v-row>
-                <v-col cols="12">
-                    <v-sheet color="#ffeaa7" class="pa-3">
-                        <span>Agendamento econtra-se pendente de aprovação</span>
-                    </v-sheet>
-                </v-col>
+                    <span>Agendamento econtra-se pendente de aprovação</span>
 
-                <v-col cols="12" md="6">
-                    <v-radio-group v-model="agendamento.status_id" label="Status">
-                        <v-radio v-for="option in statusOptions" :key="option.value" :label="option.label"
-                            :value="option.value"></v-radio>
+                </v-card-title>
 
-                    </v-radio-group>
-                </v-col>
-                <v-col md="6" v-if="agendamento.status_id && agendamento.status_id == 3">
-                    <v-text-field variant="outlined" v-model="agendamento.rejeicao_motivo"
-                        label="Motivo da Rejeição"></v-text-field>
-                </v-col>
-            </v-row>
+                <v-card-text>
+                    <v-row>
+                        <v-col cols="12">
 
+                        </v-col>
 
+                        <v-col cols="12" md="6">
+                            <v-radio-group v-model="agendamento.status_id"
+                                label="Selecione o status para validar avaliação">
+                                <v-radio v-for="option in statusOptions" :key="option.value" :label="option.label"
+                                    :value="option.value"></v-radio>
 
+                            </v-radio-group>
+                        </v-col>
+                        <v-col md="6" v-if="agendamento.status_id && agendamento.status_id == 3">
+                            <v-textarea variant="outlined" v-model="agendamento.rejeicao_motivo"
+                                label="Motivo da Rejeição"></v-textarea>
+                        </v-col>
+                        <v-col cols="12" class="d-flex justify-center">
+                            <v-btn @click="submeterAprovacao" color="primary">Submeter Validação</v-btn>
+                        </v-col>
+                    </v-row>
+                </v-card-text>
 
-            <v-divider>
-
-            </v-divider>
-
+            </v-card>
+            <v-sheet v-else color="accent" class="d-flex justify-center pa-2" rounded>
+                <small class="text-error"> Aguardando confirmação de agendamento</small>
+            </v-sheet>
         </v-card-text>
+
+
+
+
+
+
 
 
         <v-card-text v-if="agendamento">
@@ -132,10 +181,7 @@ const statusOptions = [
                         <v-text-field v-model="agendamento.horario_inicio" variant="outlined" label="Horário"
                             type="time"></v-text-field>
                     </v-col>
-                    <v-col cols="4">
-                        <v-select v-model="agendamento.status_id" disabled :items="statusList" title="descricao"
-                            value="id" text="descricao"></v-select>
-                    </v-col>
+
                     <v-col cols="4">
                         <v-text-field v-model="agendamento.tipo_agendamento" variant="outlined"
                             label="Tipo de Agendamento"></v-text-field>
@@ -216,5 +262,14 @@ const statusOptions = [
             </v-row>
         </v-card-text>
 
+    </v-card>
+    <v-card v-else>
+        <v-card-text>
+            <v-row>
+                <v-col cols="12" class="d-flex justify-center">
+                    <v-progress-circular indeterminate color="primary"></v-progress-circular>
+                </v-col>
+            </v-row>
+        </v-card-text>
     </v-card>
 </template>

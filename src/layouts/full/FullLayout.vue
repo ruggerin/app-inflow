@@ -45,7 +45,7 @@ function startTokenRefresh() {
         }
       }
     }
-  }, 0.5 * 60 * 1000); // Temporização de verificação em minutos 
+  }, 5 * 60 * 1000); // Temporização de verificação em minutos 
 }
 
 // Função para detectar atividade do usuário

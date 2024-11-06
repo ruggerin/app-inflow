@@ -37,10 +37,20 @@ export async function getStatusById(id: number): Promise<StatusAgendamento> {
         return getStatusAgendamentoEmpyt();
     }
 }
+export async function getStatusFromListById(id: number, statusAgendamentoList: StatusAgendamento[]): Promise<StatusAgendamento> {
+    try {
+        return statusAgendamentoList.filter(x => x.id === id)[0];
+    } catch (error) {
+        console.error(error);
+        return getStatusAgendamentoEmpyt();
+    }
+}
+
+
 export async function getStatusList(): Promise<StatusAgendamento[]> {
     try {
         const response = await fetchWrapper.get('cadastros_basicos/status_agendamento');
-        return response.status_agendamento;
+        return response;
     } catch (error) {
         console.error(error);
         return [];

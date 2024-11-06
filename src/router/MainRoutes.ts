@@ -49,6 +49,11 @@ const MainRoutes = {
       path: '/cadastro/produtos',
       component: () => import('@/views/cadastros_basicos/produtos/ProdutosIndex.vue')
     },
+    {
+      name: 'user-profie',
+      path: '/profie',
+      component: () => import('@/views/cadastros_basicos/users/UserPerfil.vue')
+    },
 
 
     {

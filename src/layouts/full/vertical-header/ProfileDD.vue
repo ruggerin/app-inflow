@@ -13,35 +13,26 @@ const authStore = useAuthStore();
   <!-- profile DD -->
   <!-- ---------------------------------------------- -->
   <div class="pa-4">
-    <h4 class="mb-n1">Bem vindo, <span class="font-weight-regular"></span>{{ authStore.user.user_info.nome?? 'Usuário Indefinido' }}</h4>
+    <h4 v-if="authStore.user.user_info.nome != undefined" class="mb-n1">Bem vindo, <span
+        class="font-weight-regular"></span>{{ authStore.user.user_info.nome ?? 'Usuário Indefinido' }}</h4>
     <span class="text-subtitle-2 text-medium-emphasis">Plastape</span>
 
-    
 
-    
+
+
     <perfect-scrollbar style="height: calc(100vh - 300px); max-height: 200px">
-      <v-divider></v-divider> 
+      <v-divider></v-divider>
 
       <v-list class="mt-3">
-        <v-list-item to="/profie" active-color="secondary" rounded="md">
-          <template v-slot:prepend>
-            <SettingsIcon size="20" class="mr-2" />
-          </template>
-
-          <v-list-item-title class="text-subtitle-2">Configurações</v-list-item-title>
-        </v-list-item>
-
         <v-list-item to="/profie" active-color="secondary" rounded="md">
           <template v-slot:prepend>
             <UserIcon size="20" class="mr-2" />
           </template>
 
-          <v-list-item-title class="text-subtitle-2">Pendências</v-list-item-title>
-
-          <template v-slot:append>
-            <v-chip color="warning" class="text-white" text="02" variant="flat" size="small" />
-          </template>
+          <v-list-item-title class="text-subtitle-2">Perfil do usuário</v-list-item-title>
         </v-list-item>
+
+       
 
         <v-list-item @click="authStore.logout()" active-color="secondary" rounded="md">
           <template v-slot:prepend>

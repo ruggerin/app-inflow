@@ -34,7 +34,7 @@ export const useAuthStore = defineStore({
 
     async checkAuthenticationApi() {
       try {
-        
+
         if (this.user == null) {
           return false;
         }
@@ -62,5 +62,14 @@ export const useAuthStore = defineStore({
         throw error;
       }
     },
+
+    async hasPermission(menuName: string, permissionName: string): Promise<boolean> {
+      var response = await fetchWrapper.post(`auth/verifypermission`, {
+        "menu_name": menuName,
+        "permission_name": permissionName
+      });
+      var result: boolean = response.result ?? false;
+      return response;
+    }
   }
 });
