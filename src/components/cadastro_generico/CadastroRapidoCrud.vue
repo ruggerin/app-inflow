@@ -207,7 +207,7 @@ function closeEdit() {
 
         <EasyDataTable :loading="gridLoading" :headers="headers" :items="items">
 
-          <template #item-actions="item, column">
+          <template #item-actions="item">
 
             <v-icon @click="edit(item.id)" color="primary">mdi-pencil</v-icon>
             <v-icon @click="dialogRemoveOpen(item)" color="error">mdi-delete</v-icon>
