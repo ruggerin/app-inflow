@@ -168,6 +168,16 @@ const idOutput = computed(() => {
 });
 
 
+function exibirCampo(item:any){
+    if(item.hidden){
+        return false;
+    }
+    if(item.readonly && props.item_id == 0){
+        return false;
+    }
+    return true;
+}
+
 
 
 </script>
@@ -194,8 +204,9 @@ const idOutput = computed(() => {
 
             <form @submit.prevent="submit">
                 <v-row justify="center" class="align-center mb-3">
-                    <v-col cols="10" v-for="field in props.controller_form.fields.filter((campo) => !campo.hidden)"
-                        :key="field.id">
+                    <v-col cols="10"
+                        v-for="field in props.controller_form.fields.filter((campo) => exibirCampo(campo))" :key="field.id">
+                        
 
 
                         <v-text-field v-if="field.name == 'id'" v-model="idOutput" variant="outlined" label="Código"
@@ -207,8 +218,8 @@ const idOutput = computed(() => {
                         <!-- <v-color-picker v-else-if="field.type =='color' "></v-color-picker> -->
                         <ColorField v-else-if="field.type == 'color'" v-model="field.value"></ColorField>
 
-                        <v-text-field v-else-if="field.type == 'number'" type="number" variant="outlined" :label="field.label"
-                            v-model="field.value" :readonly="field.readonly ?? false"
+                        <v-text-field v-else-if="field.type == 'number'" type="number" variant="outlined"
+                            :label="field.label" v-model="field.value" :readonly="field.readonly ?? false"
                             :error-messages="validationErrors[field.name]"></v-text-field>
                         <v-text-field v-else-if="field.type == 'date'" variant="outlined" :label="field.label"
                             v-model="field.value" :readonly="field.readonly ?? false"
@@ -217,12 +228,14 @@ const idOutput = computed(() => {
                             v-model="field.value" :readonly="field.readonly ?? false"
                             :error-messages="validationErrors[field.name]"></v-text-field>
 
-                        <SelectComponent v-else-if="field.type == 'select' && field.colecao_helper != null" v-model:itemId="field.value" :label="field.label"  :controller_name="field.colecao_helper" ></SelectComponent>
+                        <SelectComponent v-else-if="field.type == 'select' && field.colecao_helper != null"
+                            v-model:itemId="field.value" :label="field.label" :controller_name="field.colecao_helper">
+                        </SelectComponent>
 
                         <v-text-field v-else variant="outlined" :label="field.label" v-model="field.value"
                             :readonly="field.readonly ?? false"
                             :error-messages="validationErrors[field.name]"></v-text-field>
-                 
+
                     </v-col>
 
 

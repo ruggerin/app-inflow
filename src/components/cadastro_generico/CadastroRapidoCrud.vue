@@ -8,7 +8,7 @@ import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
 import 'vue3-easy-data-table/dist/style.css';
 
 
-import {  getFastForm } from '@/utils/CadastrosBasicosList';
+import { getFastForm } from '@/utils/CadastrosBasicosList';
 import type { FastForm } from '@/models/FastForms';
 //import type { FastFormField } from '@/models/FastFormsFields';
 import DetailComponent from './DetailComponent.vue';
@@ -102,9 +102,23 @@ function edit(id: number) {
 
 
 const dialogRemove = ref(false);
+const formRemove = ref({titulo: '', subtitulo: ''});
 
-function dialogRemoveOpen(id: number) {
-  formEditId.value = id;
+function dialogRemoveOpen(item: any) {
+  formEditId.value = item.id;
+
+  if (fastForm.value?.coluna_titulo) {
+    formRemove.value.titulo = item[fastForm.value.coluna_titulo] ?? item.id;
+   
+  
+  } else {
+    formRemove.value.titulo = item.id;
+  }
+  if (fastForm.value?.coluna_subtitulo) {
+    formRemove.value.subtitulo = item[fastForm.value.coluna_subtitulo] ?? null;
+  } else {
+    formRemove.value.subtitulo = '';
+  }
   dialogRemove.value = true;
 }
 
@@ -156,12 +170,16 @@ function closeEdit() {
 
 <template>
 
-  <v-dialog v-model="dialogRemove" max-width="290">
+  <v-dialog v-model="dialogRemove" max-width="400">
     <v-card>
       <v-card-title>Remover</v-card-title>
       <v-card-text>
         Deseja realmente remover este item?
-        <br> Id: {{ formEditId }}
+        <br>
+        <div v-if="formRemove.titulo!= null">Registro: <br> {{ formRemove.titulo }}<br><span v-if="formRemove.subtitulo">({{ formRemove.subtitulo }})</span> 
+          
+        </div>
+        <div v-else> Registro Id: {{ formEditId }}</div>
       </v-card-text>
       <v-card-actions>
         <v-btn @click="dialogRemove = false">Cancelar</v-btn>
@@ -189,10 +207,10 @@ function closeEdit() {
 
         <EasyDataTable :loading="gridLoading" :headers="headers" :items="items">
 
-          <template #item-actions="{ id }">
+          <template #item-actions="item, column">
 
-            <v-icon @click="edit(id)" color="primary">mdi-pencil</v-icon>
-            <v-icon @click="dialogRemoveOpen(id)" color="error">mdi-delete</v-icon>
+            <v-icon @click="edit(item.id)" color="primary">mdi-pencil</v-icon>
+            <v-icon @click="dialogRemoveOpen(item)" color="error">mdi-delete</v-icon>
           </template>
           <template #item="{ item, column }">
             <span v-if="getType(column) == 'date'">{{ moment(item[column]).format('DD/MM/YYYY') }}</span>
@@ -200,7 +218,7 @@ function closeEdit() {
 
             <span v-else-if="getType(column) == 'boolean'">{{ item[column] ? 'Sim' : 'Não' }}</span>
             <div v-else-if="getType(column) == 'color'" class="d-flex justfy-center">
-              <span> {{ item[column]}}</span>
+              <span> {{ item[column] }}</span>
               <v-sheet :color="item[column]" style="width: 20px; height: 20px; margin-left: 5px; "></v-sheet>
             </div>
 

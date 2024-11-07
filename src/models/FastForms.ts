@@ -10,6 +10,8 @@ export interface FastForm {
     created_at: Date;
     updated_at: Date;
     field_title: string;
+    coluna_titulo: string | null;
+    coluna_subtitulo: string | null;
 }
 
 export async function fastFormConstruct(controle_nome: string): Promise<FastForm> {
@@ -22,4 +24,15 @@ export async function fastFormConstruct(controle_nome: string): Promise<FastForm
         });
 
     return fastForm;
+}
+
+export async function getInfoCadastroAuxiliar(controle_nome: string): Promise<string[]> {
+    let helpers: string[] = [];
+    await fetchWrapper.get('cadastros_basicos/configuracao_cadastro_basico/' + controle_nome + '/artefatos')
+        .then((response) => {
+            console.log(response);
+            helpers = response;
+        });
+    return helpers;
+    
 }

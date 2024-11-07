@@ -39,6 +39,8 @@ interface FormularioCadastro {
     label: string | null,
     controle_nome: string | null,
     id: number | null,
+    coluna_titulo: string | null,
+    coluna_subtitulo: string | null,
     columns: columns[]
 }
 
@@ -93,7 +95,7 @@ function handleItemClick(TABLE_NAME: string) {
 }
 
 const esconderLista = ref(false);
-function setVisualizateForm(){
+function setVisualizateForm() {
     esconderLista.value = !esconderLista.value;
 }
 
@@ -141,7 +143,7 @@ async function submitForm() {
         editForm.value?.columns.forEach((column, index) => {
             column.order = index + 1;
         });
-        
+
         const response = await fetchWrapper.post('cadastros_basicos/configuracao_cadastro_basico/' + editForm.value?.TABLE_NAME + '/update', editForm.value);
         console.log(response);
 
@@ -209,7 +211,7 @@ async function submitForm() {
                             </v-list>
                         </div>
                     </v-col>
-                  
+
                     <v-col :cols="esconderLista ? 12 : 9" class="parent-container">
 
                         <v-card v-if="formEditDialogLoading">
@@ -232,13 +234,23 @@ async function submitForm() {
                             <v-card-text>
                                 <v-row v-if="editForm" class="pa-2">
                                     <v-col cols="12">
-                                        <v-text-field variant="outlined" v-model="editForm.controle_nome"
+                                        <v-text-field variant="outlined" v-model="editForm.controle_nome" density="compact"
                                             label="Endpoint - Api Resource" hide-details></v-text-field>
                                     </v-col>
                                     <v-col cols="12">
 
-                                        <v-text-field variant="outlined" v-model="editForm.label"
+                                        <v-text-field variant="outlined" v-model="editForm.label" density="compact"
                                             label="Label - Texto apresentação" hide-details></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-select v-model="editForm.coluna_titulo" :items="editForm.columns"
+                                            variant="outlined" density="compact" item-title="COLUMN_NAME"
+                                            item-value="COLUMN_NAME" label="Coluna Título" hide-details></v-select>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-select v-model="editForm.coluna_subtitulo" :items="editForm.columns"
+                                            variant="outlined" density="compact" item-title="COLUMN_NAME"
+                                            item-value="COLUMN_NAME" label="Coluna Subtítulo" hide-details></v-select>
                                     </v-col>
 
 
@@ -296,8 +308,8 @@ async function submitForm() {
                                                             dense></v-switch>
                                                     </td>
                                                     <td>
-                                                        <v-switch color="primary" v-model="row.hidden_index" hide-details
-                                                            dense></v-switch>
+                                                        <v-switch color="primary" v-model="row.hidden_index"
+                                                            hide-details dense></v-switch>
                                                     </td>
                                                     <td>
                                                         <v-switch color="primary" v-model="row.readonly" hide-details
@@ -324,7 +336,7 @@ async function submitForm() {
                         </v-card>
                         <div class="btn-container">
                             <v-btn @click="setVisualizateForm()" icon text small>
-                                
+
                                 <v-icon v-if="esconderLista">mdi-arrow-right-bold-box-outline</v-icon>
                                 <v-icon v-else="esconderLista">mdi-arrow-left-bold-box-outline</v-icon></v-btn>
                         </div>
@@ -342,18 +354,20 @@ async function submitForm() {
 
 </template>
 <style scoped>
-
 .parent-container {
-  position: relative; /* Define a posição relativa para o contêiner pai */
+    position: relative;
+    /* Define a posição relativa para o contêiner pai */
 }
 
 .btn-container {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  transform: translateY(-50%);
-  z-index: 1000; /* Certifique-se de que o valor de z-index seja maior que o das outras divs */
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    z-index: 1000;
+    /* Certifique-se de que o valor de z-index seja maior que o das outras divs */
 }
+
 .scrollable-container {
     max-height: 75vh;
     overflow-y: auto;
