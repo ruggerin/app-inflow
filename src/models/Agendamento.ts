@@ -30,6 +30,8 @@ export interface Agendamento {
   veiculo_id?: number | null; // bigint unsigned DEFAULT NULL
   motorista_id?: number | null; // bigint unsigned DEFAULT NULL ,
 
+  empresa_id?: number | null; // bigint unsigned DEFAULT NULL
+
   rejeicao_motivo?: string | null; // varchar(255) DEFAULT NULL
 
 }

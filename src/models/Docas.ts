@@ -10,6 +10,7 @@ export interface Docas  {
   user_id_updated?: number | null;
   user_id_deleted?: number | null;
   motivo_alteracao?: string | null;
+  empresa_id?: number | null;
 }
 
 export function getDocasList(): Promise< Docas[]> {

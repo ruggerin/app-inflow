@@ -69,7 +69,7 @@ export const useAuthStore = defineStore({
         "permission_name": permissionName
       });
       var result: boolean = response.result ?? false;
-      return response;
+      return result;
     }
   }
 });

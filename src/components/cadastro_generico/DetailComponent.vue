@@ -168,11 +168,11 @@ const idOutput = computed(() => {
 });
 
 
-function exibirCampo(item:any){
-    if(item.hidden){
+function exibirCampo(item: any) {
+    if (item.hidden) {
         return false;
     }
-    if(item.readonly && props.item_id == 0){
+    if (item.readonly && props.item_id == 0) {
         return false;
     }
     return true;
@@ -204,9 +204,9 @@ function exibirCampo(item:any){
 
             <form @submit.prevent="submit">
                 <v-row justify="center" class="align-center mb-3">
-                    <v-col cols="10"
-                        v-for="field in props.controller_form.fields.filter((campo) => exibirCampo(campo))" :key="field.id">
-                        
+                    <v-col cols="10" v-for="field in props.controller_form.fields.filter((campo) => exibirCampo(campo))"
+                        :key="field.id">
+
 
 
                         <v-text-field v-if="field.name == 'id'" v-model="idOutput" variant="outlined" label="Código"
@@ -227,6 +227,18 @@ function exibirCampo(item:any){
                         <v-text-field v-else-if="field.type == 'datetime'" variant="outlined" :label="field.label"
                             v-model="field.value" :readonly="field.readonly ?? false"
                             :error-messages="validationErrors[field.name]"></v-text-field>
+
+                        <v-text-field v-else-if="field.type == 'cnpj'" variant="outlined" :label="field.label"
+                            v-maska="'##.###.###/####-##'" v-model="field.value" :readonly="field.readonly ?? false"
+                            :error-messages="validationErrors[field.name]"></v-text-field>
+
+                        <v-text-field v-else-if="field.type == 'cep'" variant="outlined" :label="field.label"
+                            v-maska="'#####-###'" v-model="field.value" :readonly="field.readonly ?? false"
+                            :error-messages="validationErrors[field.name]"></v-text-field>
+                        <v-text-field v-else-if="field.type == 'telefone'" variant="outlined" :label="field.label"
+                            v-maska="'(##) ####-####'" v-model="field.value" :readonly="field.readonly ?? false"
+                            :error-messages="validationErrors[field.name]"></v-text-field>
+
 
                         <SelectComponent v-else-if="field.type == 'select' && field.colecao_helper != null"
                             v-model:itemId="field.value" :label="field.label" :controller_name="field.colecao_helper">

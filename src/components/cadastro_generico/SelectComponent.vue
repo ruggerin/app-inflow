@@ -11,7 +11,14 @@ const fastForm = ref<FastForm>();
 const searchTerm = ref('');
 const selectedId = ref<number | null>(null);
 
-const props = defineProps<{ controller_name: string, label: string, subtitle?: string, itemId: any, exibir_botao_add?: boolean, density?: 'default' | 'comfortable' | 'compact' }>();
+
+
+const props = defineProps<{ 
+    controller_name: string, 
+    label: string, 
+    subtitle?: string, 
+    clearable?: boolean,
+    itemId: any, exibir_botao_add?: boolean, density?: 'default' | 'comfortable' | 'compact' }>();
 
 const density = ref<'default' | 'comfortable' | 'compact'>('default');
 async function getList() {
@@ -31,9 +38,12 @@ const emit = defineEmits(['update:itemId']);
 
 watch(selectedId, (newVal) => {
     emit('update:itemId', newVal);
+
 });
 
 onMounted(async () => {
+
+    selectedId.value = props.itemId;
     await getList();
     if (props.density) {
         density.value = props.density;
@@ -42,7 +52,7 @@ onMounted(async () => {
     fastForm.value = await fastFormConstruct(props.controller_name);
 });
 
-watch(() => props.controller_name, async (newValues) => {
+watch(() => props.controller_name, async () => {
     await getList();
 });
 
@@ -91,7 +101,9 @@ function openEdit() {
     </v-dialog>
 
     <v-row>
+    
         <v-col cols="10">
+    
             <v-select clearable :density="density" v-model="selectedId" :items="marcasSarchead()" item-value="id"
                 item-text="descricao" :label="label" :item-props="itemProps" variant="outlined" props>
                 <template v-slot:prepend-item>

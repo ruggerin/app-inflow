@@ -43,7 +43,7 @@ onMounted(async () => {
 async function carregarDados() {
 
     btnRefreshLoading.value = true; 
-    await fetchWrapper.get('agendamento/index', { status_id: 1 }).then((response) => {
+    await fetchWrapper.get('agendamento/index', { status_id: 2 }).then((response) => {
         agendamentoList.value = response;
     });
     btnRefreshLoading.value = false;

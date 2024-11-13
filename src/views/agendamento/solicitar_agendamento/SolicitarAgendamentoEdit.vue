@@ -12,6 +12,8 @@ import { getFornecedorList } from '@/models/Fornecedor';
 
 import type { AgendamentoDocumento } from '@/models/AgendamentoDocumento';
 
+import type { Empresa } from '@/models/Empresa';
+
 import 'v-calendar/dist/style.css';
 
 import type { Transportadora } from '@/models/Transportadora';
@@ -87,6 +89,7 @@ interface Fornecedores {
     editItem?: boolean
 }
 
+const prioridadeList = ['NORMAL', 'EMERGENCIAL'];
 
 
 onMounted(async () => {
@@ -98,7 +101,7 @@ onMounted(async () => {
     await getFornecedores();
     await getDocas();
     await getTransportadoras();
-
+    await getEmpresas();
     // await getAllowedDates();
 
 
@@ -193,7 +196,10 @@ const janelasDisponivels = ref<HorarioDisponivel[]>([]);
 async function getHorarioDisponivelData(data: string) {
     //console.log(data);
     janelasDisponivels.value = [];
-    await fetchWrapper.get('agendamento/janelasdisponivels/' + data).then((response) => {
+    await fetchWrapper.get('agendamento/janelasdisponivels', {
+        data: data,
+        empresa_id: agendamento.value.empresa_id
+    }).then((response) => {
         janelasDisponivels.value = response;
         console.log(response);
     });
@@ -243,6 +249,101 @@ function fornecedorSelectProps(item: any) {
 const botaoNavegacaoTexto = ref('Próximo');
 function botaoNavegacaoAcao() {
     console.log(tab.value);
+
+
+    if (tab.value == 0) {
+        if (agendamento.value.fornecedor_id == null || agendamento.value.fornecedor_id == 0) {
+            Swal.fire({
+                title: 'Atenção',
+                text: 'Selecione um fornecedor para prosseguir',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+    }
+    if (tab.value == 1) {
+        if (agendamento.value.agendamento_documentos.length == 0) {
+            Swal.fire({
+                title: 'Atenção',
+                text: 'Adicione ao menos um documento para prosseguir',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+    }
+    if (tab.value == 2) {
+        if (agendamento.value.data_entrega == null) {
+            Swal.fire({
+                title: 'Atenção',
+                text: 'Selecione a data de entrega para prosseguir',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        if (agendamento.value.doca_id == null) {
+            Swal.fire({
+                title: 'Atenção',
+                text: 'Selecione a doca para prosseguir',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        if (agendamento.value.empresa_id == null) {
+            Swal.fire({
+                title: 'Atenção',
+                text: 'Selecione a empresa para prosseguir',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+        if (agendamento.value.horario_inicio == null || agendamento.value.horario_fim == null) {
+            Swal.fire({
+                title: 'Atenção',
+                text: 'Selecione o horário de entrega para prosseguir',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+    }
+
+    if(tab.value ==3){
+        if(agendamento.value.transportador_id == null){
+            Swal.fire({
+                title: 'Atenção',
+                text: 'Selecione a transportadora para prosseguir',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+        if(agendamento.value.veiculo_id){
+            Swal.fire({
+                title: 'Atenção',
+                text: 'Informe o veículo para prosseguir',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+        if(agendamento.value.motorista_id == null){
+            Swal.fire({
+                title: 'Atenção',
+                text: 'Informe o motorista para prosseguir',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+    }
 
     if (tab.value < 4) {
         avancarAction();
@@ -337,6 +438,15 @@ function changeTab(newTab: number) {
     tab.value = newTab;
 }
 
+const empresaList = ref<Empresa[]>([]);
+
+function getEmpresas() {
+
+    fetchWrapper.get('cadastros_basicos/empresa').then((response) => {
+        empresaList.value = response;
+    });
+
+}
 
 function docasJanelas() {
     if (janelaIndex.value == null || janelasDisponivels.value.length == 0) {
@@ -346,6 +456,12 @@ function docasJanelas() {
 }
 const janelaIndex = ref(0); // Pega a posição da janela selecionada
 
+
+watch(() => agendamento.value.empresa_id, (newValue) => {
+    if (newValue != null) {
+        getHorarioDisponivelData(agendamento.value.data_entrega.toISOString().slice(0, 10));
+    }
+},);
 watch(() => janelaIndex.value, (newValue) => {
     if (newValue != null) {
         var janelaInfo = janelasDisponivels.value[newValue];
@@ -679,7 +795,26 @@ function finalizar() {
                                                 <v-row>
                                                     <v-col cols=12>
                                                         <h3 class="text-primary">
-                                                            3. Selecione a doca de descarga
+                                                            3. Selecione Unidade
+                                                        </h3>
+                                                    </v-col>
+                                                    <v-col cols="12">
+                                                        <div>
+
+
+                                                            <SelectComponent v-model:itemId="agendamento.empresa_id"
+                                                                label="Empresa entrega" :controller_name="'empresa'">
+                                                            </SelectComponent>
+                                                        </div>
+
+                                                    </v-col>
+                                                </v-row>
+                                            </v-col>
+                                            <v-col cols="12">
+                                                <v-row>
+                                                    <v-col cols=12>
+                                                        <h3 class="text-primary">
+                                                            4. Selecione a doca de descarga
                                                         </h3>
                                                     </v-col>
                                                     <v-col cols="12">
@@ -762,20 +897,12 @@ function finalizar() {
                                                     @change="adicionarAnexo"></v-file-input> -->
                                             </v-col>
                                             <v-col cols="12">
-
-                                                <h3 class="text-primary">Anexos:</h3>
-                                                <v-list>
-                                                    <v-list-item v-for="(anexo, index) in anexos" :key="index">
-
-                                                        {{ anexo[0].name }}
-
-                                                        <v-btn size="small" variant="text" icon
-                                                            @click="removerAnexo(index)">
-                                                            <v-icon>mdi-delete</v-icon>
-                                                        </v-btn>
-                                                    </v-list-item>
-
-                                                </v-list>
+                                                <v-col cols="3">
+                                                    <!--  <v-text-field v-model="agendamento.tipo_agendamento" variant="outlined"
+                            label="Tipo de Agendamento"></v-text-field> -->
+                                                    <v-select label="Prioridade" v-model="agendamento.tipo_agendamento"
+                                                        variant="outlined" :items="prioridadeList"></v-select>
+                                                </v-col>
                                             </v-col>
                                         </v-row>
                                     </v-window-item>

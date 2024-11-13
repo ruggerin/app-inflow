@@ -18,7 +18,7 @@ const props = defineProps({ item: Object, level: Number });
         <!---Icon  -->
         <template v-slot:prepend>
         <!--   <Icon :item="item.icon" :level="level" /> -->
-           <v-icon :item="item.icon" :level="level" v-if="item.icon" :color="item.iconColor" size="small" class="mr-1">{{ item.icon }}</v-icon>
+           <v-icon :item="item.icon" :level="level" v-if="item.icon" :color="item.iconColor" size="small" class="mr-0">{{ item.icon }}</v-icon>
         </template>
         <!---Title  -->
         <v-list-item-title v-text="item.label" class="mr-auto"></v-list-item-title>
