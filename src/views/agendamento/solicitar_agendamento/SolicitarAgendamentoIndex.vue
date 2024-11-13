@@ -234,10 +234,28 @@ function extractTimeFromDate(date: string): string {
 function getObjHourString(objetct: any): string {
     return extractTimeFromDate(objetct.start) + '-' + extractTimeFromDate(objetct.end);
 }
+
+const dialogAgendamentoId = ref(0);
+const dialogAgendamentoShow = ref(false);
+function abrirDetalhes(id: number) {
+    console.log('abrirDetalhes', id)
+    dialogAgendamentoShow.value = true;
+    dialogAgendamentoId.value = id;
+}
+
+function closeDialogAgendamento() {
+    dialogAgendamentoShow.value = false;
+    dialogAgendamentoId.value = 0;
+}
 const toggle = ref(0);
 </script>
 
 <template>
+    <v-dialog v-model="dialogAgendamentoShow">
+        <AgendamentoDetalhe @closeDialog="closeDialogAgendamento" @refreshList="carregarDados()"
+            :agendamento_id="dialogAgendamentoId">
+        </AgendamentoDetalhe>
+    </v-dialog>
     <v-row>
 
         <UiParentCard title="Painel de agendamento">
@@ -330,7 +348,7 @@ const toggle = ref(0);
                     </template>
 
                     <template #item-acoes="{ id }">
-                        <v-btn :to="{ path: `/agendamento/solicitar/${id}/editar` }" icon variant="text">
+                        <v-btn @click="abrirDetalhes(id)" icon variant="text">
                             <EditIcon size="20" />
                         </v-btn>
 
