@@ -89,6 +89,11 @@ const MainRoutes = {
       path: '/agendamento/aprovacao',
       component: () => import('@/views/agendamento/AprovacaoAgendamento.vue')
     },
+    {
+      name: 'agendamento-entrega',
+      path: '/agendamento/entrega',
+      component: () => import('@/views/agendamento/ConfirmarEntregaAgendamento.vue')
+    },
 
     {
       name: 'cadastro-basico-config',

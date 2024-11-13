@@ -17,9 +17,9 @@ const props = defineProps({ item: Object, level: Number });
     <!---If icon-->
     <template v-slot:prepend>
       <!-- <Icon :item="item.icon" :level="level" /> -->
-       <v-icon v-if="item.icon" :color="item.iconColor" size="small"  class="mr-2">{{ item.icon }}</v-icon>
+       <v-icon v-if="item.icon" :color="item.iconColor" size="small"  class="mr-0">{{ item.icon }}</v-icon>
     </template>
-    <v-list-item-title>{{ $t(item.label) }}</v-list-item-title>
+    <v-list-item-title class="multiline" multi-line>{{ $t(item.label) }}</v-list-item-title>
     <!---If Caption-->
     <v-list-item-subtitle v-if="item.label" class="text-caption mt-n1 hide-menu">
       {{ item.subCaption }}
@@ -28,3 +28,9 @@ const props = defineProps({ item: Object, level: Number });
  
   </v-list-item>
 </template>
+<style scoped>
+.multiline {
+  white-space: normal; /* Permite que o texto quebre em várias linhas */
+  word-wrap: break-word; /* Quebra palavras longas */
+}
+</style>
