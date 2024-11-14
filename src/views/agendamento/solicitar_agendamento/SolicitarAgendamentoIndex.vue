@@ -12,6 +12,7 @@ import type { Fornecedor } from '@/models/Fornecedor';
 import UiParentCard from '@/components/shared/UiParentCard.vue';
 import Swal from 'sweetalert2';
 import IndexAgendamentoEditacaoRapida from './IndexAgendamentoEditacaoRapida.vue';
+import AgendamentoDetalhe from '../AgendamentoDetalhe.vue';
 
 const themeColor = ref('rgb(var(--v-theme-secondary))');
 
@@ -316,19 +317,19 @@ const toggle = ref(0);
                         Novo agendamento
                     </v-btn>
                 </div>
-                <div class="pa-1">
+     <!--            <div class="pa-1">
                     <v-btn color="error" :to="{ path: '/agendamento/solicitar/novo/editar' }">
                         <v-icon>mdi-alert-box</v-icon>
                         Agendamento de emergência
                     </v-btn>
-                </div>
+                </div> -->
             </v-col>
 
             <v-col cols="12" class="d-flex justify-end">
                 <v-btn-toggle v-model="toggle" divided>
-                    <v-btn icon="mdi-table"></v-btn>
+                  
                     <v-btn icon="mdi-calendar-multiselect"></v-btn>
-
+                    <v-btn icon="mdi-table-of-contents"></v-btn>
                 </v-btn-toggle>
             </v-col>
             <v-col cols="12" md="12" v-if="toggle == 1">

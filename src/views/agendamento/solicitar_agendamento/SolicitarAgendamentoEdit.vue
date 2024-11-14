@@ -22,6 +22,7 @@ import type { HorarioDisponivel } from '@/models/AgendamentoJanelas';
 import SelectComponent from '@/components/cadastro_generico/SelectComponent.vue';
 
 import ResumoAgendamento from '../ResumoAgendamento.vue';
+import { useAuthStore } from '@/stores/auth';
 //import SelectTransportadoraComponent from '@/components/selects/selectTransportadoraComponent.vue';
 
 const themeColor = ref('rgb(var(--v-theme-secondary))');
@@ -91,7 +92,11 @@ interface Fornecedores {
 
 const prioridadeList = ['NORMAL', 'EMERGENCIAL'];
 
+const permiteAlterarPrioridade = ref(false);
 
+async function carregarPermiteAprovar() {
+    permiteAlterarPrioridade.value = await useAuthStore().hasPermission('agendamento-fornecedor', "permite-alterar-prioridade");
+}
 onMounted(async () => {
     if (route.params.id != "novo") {
         await carregarCadastro();
@@ -102,6 +107,7 @@ onMounted(async () => {
     await getDocas();
     await getTransportadoras();
     await getEmpresas();
+    await carregarPermiteAprovar();
     // await getAllowedDates();
 
 
@@ -246,6 +252,7 @@ function fornecedorSelectProps(item: any) {
     };
 }
 
+const currentStep = ref(0);
 const botaoNavegacaoTexto = ref('Próximo');
 function botaoNavegacaoAcao() {
     console.log(tab.value);
@@ -261,6 +268,7 @@ function botaoNavegacaoAcao() {
             });
             return;
         }
+
 
     }
     if (tab.value == 1) {
@@ -315,8 +323,8 @@ function botaoNavegacaoAcao() {
         }
     }
 
-    if(tab.value ==3){
-        if(agendamento.value.transportador_id == null){
+    if (tab.value == 3) {
+        if (agendamento.value.transportador_id == null) {
             Swal.fire({
                 title: 'Atenção',
                 text: 'Selecione a transportadora para prosseguir',
@@ -325,7 +333,7 @@ function botaoNavegacaoAcao() {
             });
             return;
         }
-        if(agendamento.value.veiculo_id){
+        if (agendamento.value.veiculo_id) {
             Swal.fire({
                 title: 'Atenção',
                 text: 'Informe o veículo para prosseguir',
@@ -334,7 +342,7 @@ function botaoNavegacaoAcao() {
             });
             return;
         }
-        if(agendamento.value.motorista_id == null){
+        if (agendamento.value.motorista_id == null) {
             Swal.fire({
                 title: 'Atenção',
                 text: 'Informe o motorista para prosseguir',
@@ -345,8 +353,14 @@ function botaoNavegacaoAcao() {
         }
     }
 
+
+
     if (tab.value < 4) {
         avancarAction();
+        if (currentStep.value < tab.value) {
+        currentStep.value = tab.value;
+
+    }
     }
     else {
         showResumoAgendamento.value = true;
@@ -531,8 +545,8 @@ function finalizar() {
                                                 de fornecedor para agendamento</span>
                                         </div>
                                     </v-tab>
-                                    <v-tab @click="changeTab(1)" rounded="md" class="text-left overflow-hidden"
-                                        height="70">
+                                    <v-tab @click="changeTab(1)" :disabled="currentStep < 1" rounded="md"
+                                        class="text-left overflow-hidden" height="70">
                                         <v-icon class="v-icon--start">mdi-file-document</v-icon>
                                         <!-- <FileDescriptionIcon stroke-width="1.5" width="20" class="v-icon--start" /> -->
                                         <div>
@@ -543,8 +557,9 @@ function finalizar() {
                                             </span>
                                         </div>
                                     </v-tab>
-                                    <v-tab @click="changeTab(2)" rounded="md" class="text-left overflow-hidden"
-                                        height="70">
+                                    <v-tab @click="changeTab(2)" :disabled="currentStep < 2" rounded="md"
+                                        class="text-left overflow-hidden" height="70">
+                                     
                                         <!--  <CreditCardIcon stroke-width="1.5" width="20" class="v-icon--start" /> -->
                                         <v-icon class="v-icon--start" rounded="md">mdi-calendar</v-icon>
                                         <div>
@@ -554,8 +569,8 @@ function finalizar() {
                                                 data de entrega</span>
                                         </div>
                                     </v-tab>
-                                    <v-tab @click="changeTab(3)" rounded="md" class="mb-3 text-left overflow-hidden"
-                                        height="70">
+                                    <v-tab @click="changeTab(3)" :disabled="currentStep < 3" rounded="md"
+                                        class="mb-3 text-left overflow-hidden" height="70">
                                         <v-icon class="v-icon--start" rounded="md">mdi-truck-cargo-container</v-icon>
                                         <div>
                                             <div>Informações do transporte</div>
@@ -563,8 +578,8 @@ function finalizar() {
                                             </span>
                                         </div>
                                     </v-tab>
-                                    <v-tab @click="changeTab(4)" rounded="md" class="mb-3 text-left overflow-hidden"
-                                        height="70">
+                                    <v-tab @click="changeTab(4)" :disabled="currentStep < 4" rounded="md"
+                                        class="mb-3 text-left overflow-hidden" height="70">
                                         <v-icon class="v-icon--start"
                                             rounded="md">mdi-file-document-edit-outline</v-icon>
                                         <div>
@@ -900,7 +915,7 @@ function finalizar() {
                                                 <v-col cols="3">
                                                     <!--  <v-text-field v-model="agendamento.tipo_agendamento" variant="outlined"
                             label="Tipo de Agendamento"></v-text-field> -->
-                                                    <v-select label="Prioridade" v-model="agendamento.tipo_agendamento"
+                                                    <v-select label="Prioridade" v-model="agendamento.tipo_agendamento" :disable="!permiteAlterarPrioridade"
                                                         variant="outlined" :items="prioridadeList"></v-select>
                                                 </v-col>
                                             </v-col>

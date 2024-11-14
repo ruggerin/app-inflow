@@ -285,7 +285,7 @@ function closeDialogAgendamento() {
 </script>
 <template>
     <v-dialog v-model="dialogDetalheAgendamento">
-        <AgendamentoDetalhe @closeDialog="closeDialogAgendamento" :agendamento_id="dialogAgendamentoId">
+        <AgendamentoDetalhe @closeDialog="closeDialogAgendamento" @refreshList="carregarDados()" :agendamento_id="dialogAgendamentoId">
         </AgendamentoDetalhe>
     </v-dialog>
     <v-row>

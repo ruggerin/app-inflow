@@ -16,13 +16,19 @@ import moment from 'moment';
 import type { StatusAgendamento } from '@/models/StatusAgendamento';
 
 import { formatDate } from '@/utils/helpers/dateUtils';
-import { getFornecedorNomeById } from '@/models/Fornecedor';
+import { getFornecedorNomeById, getFornecedorList } from '@/models/Fornecedor';
 import AgendamentoDetalhe from './AgendamentoDetalhe.vue';
+
+import type { Usuario } from '@/models/Usuario';
+import { getUsuarioList, getUsuariosByIdFromList } from '@/models/Usuario';
+
 
 const themeColor = ref('rgb(var(--v-theme-secondary))');
 
 const agendamentoList = ref<Agendamento[]>([]);
 const fornecedorList = ref<Fornecedor[]>([]);
+
+const usuarioList = ref<Usuario[]>([]);
 
 const statusList = ref<StatusAgendamento[]>([]);
 function getStatus() {
@@ -33,7 +39,7 @@ function getStatus() {
     })
 }
 
-const btnRefreshLoading = ref(false);  
+const btnRefreshLoading = ref(false);
 
 onMounted(async () => {
     await carregarDados();
@@ -42,11 +48,19 @@ onMounted(async () => {
 });
 async function carregarDados() {
 
-    btnRefreshLoading.value = true; 
+    fornecedorList.value = await getFornecedorList();
+
+    usuarioList.value = await getUsuarioList();
+
+    console.log('usuarioList', usuarioList.value);
+    btnRefreshLoading.value = true;
     await fetchWrapper.get('agendamento/index', { status_id: 1 }).then((response) => {
         agendamentoList.value = response;
+        console.log(response)
     });
     btnRefreshLoading.value = false;
+
+
 }
 
 function getStatusById(id: number): StatusAgendamento {
@@ -65,7 +79,7 @@ const headers: Header[] = [
     { text: "Hora Fim", value: "horario_fim" },
     { text: "Volume Total", value: "volume_total" },
     { text: "Doca", value: "doca_id" },
-    { text: "Solicitante", value: "usuario_id" },
+    { text: "Solicitante", value: "user_id_created" },
     { text: "Status", value: "status_id" },
     { text: "Ações", value: "acoes" },
 
@@ -74,13 +88,13 @@ const headers: Header[] = [
 const searchTerm = ref('');
 
 
-function filteredAgendamentos(statusId: number): Item[] {
+function filteredAgendamentos(): Item[] {
     return agendamentoList.value.filter(
         (agendamento) =>
-            agendamento.status_id == statusId &&
-            (agendamento.id?.toString().includes(searchTerm.value) ||
-                agendamento.data_agendamento?.toString().includes(searchTerm.value) ||
-                agendamento.fornecedor_id?.toString().toLowerCase().includes(searchTerm.value.toLowerCase()))
+
+        (agendamento.id?.toString().includes(searchTerm.value) ||
+            agendamento.data_agendamento?.toString().includes(searchTerm.value) ||
+            agendamento.fornecedor_id?.toString().toLowerCase().includes(searchTerm.value.toLowerCase()))
     );
 }
 
@@ -96,15 +110,23 @@ function closeDialogAgendamento() {
     dialogDetalheAgendamento.value = false;
 }
 
+function getUsuarioNome(id: number) {
+
+    let usuario = getUsuariosByIdFromList(id, usuarioList.value);
+    console.log(usuario)
+    return usuario ? usuario.nome : 'System';
+}
+
 </script>
 <template>
     <v-dialog v-model="dialogDetalheAgendamento">
-        <AgendamentoDetalhe @closeDialog="closeDialogAgendamento" @refreshList="carregarDados()" :agendamento_id="dialogAgendamentoId">
+        <AgendamentoDetalhe @closeDialog="closeDialogAgendamento" @refreshList="carregarDados()"
+            :agendamento_id="dialogAgendamentoId">
         </AgendamentoDetalhe>
     </v-dialog>
     <v-row>
         <v-col cols="12">
-            <h3>Aprovação de agendamento</h3>
+            <h3>Confirmação de entrega</h3>
         </v-col>
         <v-col cols="12">
             <v-card>
@@ -119,20 +141,23 @@ function closeDialogAgendamento() {
                 <v-card-text>
                     <v-row>
                         <v-col cols="8">
-                            <v-text-field variant="outlined"  prepend-inner-icon="mdi-magnify" v-model="searchTerm">
+                            <v-text-field variant="outlined" prepend-inner-icon="mdi-magnify" v-model="searchTerm">
                             </v-text-field>
                         </v-col>
                         <v-col cols="4">
-                            <v-btn color="primary" :loading="btnRefreshLoading" variant="text" @click="carregarDados">Atualizar</v-btn>
+                            <v-btn color="primary" :loading="btnRefreshLoading" variant="text"
+                                @click="carregarDados">Atualizar</v-btn>
                         </v-col>
                         <v-col cols="12">
 
                             <EasyDataTable table-class-name="customize-table" :theme-color="themeColor"
-                                :headers="headers" :items="filteredAgendamentos(1)">
+                                :headers="headers" :items="filteredAgendamentos()">
                                 <template #item-fornecedor_id="{ fornecedor_id }">
                                     {{ getFornecedorNomeById(fornecedor_id, fornecedorList) ?? fornecedor_id }}
                                 </template>
-
+                                <template #item-user_id_created="{ user_id_created }">
+                                    {{ getUsuarioNome(user_id_created) ?? user_id_created }}
+                                </template>
                                 <template #item-data_entrega="{ data_entrega }">
                                     {{ moment(data_entrega).format('DD/MM/YYYY') }}
                                 </template>
