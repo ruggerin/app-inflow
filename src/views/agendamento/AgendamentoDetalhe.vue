@@ -252,9 +252,109 @@ function submeterAprovacao() {
     });
 }
 const today = new Date().toISOString().split('T')[0]; // Obtém a data atual no formato YYYY-MM-DD
+const cancelarAgendamentoShow = ref(false);
+
+function cancelarAgendamentoSubmit() {
+
+    if (!agendamento.value || !agendamento.value.motivo_alteracao) {
+        return;
+    }
+    if (agendamento.value.motivo_alteracao.length < 5) {
+        Swal.fire({
+            title: 'Erro',
+            text: 'O motivo de cancelamento deve conter no mínimo 5 caracteres',
+            icon: 'error',
+            customClass: {
+                container: 'my-swal',
+            },
+        });
+        return;
+    }
+    Swal.fire({
+        title: 'Tem certeza?',
+        text: 'Você deseja cancelar este agendamento?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sim, cancelar!',
+        cancelButtonText: 'Não, manter'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let agendamento_id = props.agendamento_id;
+
+            submeterAprovacaoLoading.value = true;
+            fetchWrapper.put('agendamento/aprovar/' + agendamento_id,
+                {
+                    status_id: 5,
+                    motivo_rejeicao: agendamento.value?.rejeicao_motivo
+                }
+            ).then((response) => {
+                console.log(response);
+                Swal.fire({
+                    title: 'Sucesso',
+                    customClass: {
+                        container: 'my-swal',
+                    },
+                    text: 'Operação realizada com sucesso!',
+                    icon: 'success'
+                }).then(async () => {
+                    await getAgendamento(agendamento_id);
+                    await refreshList();
+                });
+                submeterAprovacaoLoading.value = false;
+                agendamento.value = response;
+                statusInicial.value = response.status_id ?? 0;
+            }).catch((error) => {
+                console.log(error);
+                submeterAprovacaoLoading.value = false;
+                Swal.fire({
+                    title: 'Erro',
+                    text: 'Ocorreu um erro ao tentar realizar a operação',
+                    icon: 'error',
+                    customClass: {
+                        container: 'my-swal',
+                    },
+                });
+            });
+        }
+    });
+
+}
+
 </script>
 
 <template>
+
+    <v-dialog v-model="cancelarAgendamentoShow" v-if="agendamento" max-width="550">
+
+        <v-card>
+
+
+            <v-toolbar color="primary" dark>
+                <v-toolbar-title>Cancelar Agendamento</v-toolbar-title>
+                <v-spacer></v-spacer>
+
+                <v-btn size="small" color="white" icon @click="dialogClose()">
+                    <v-icon>mdi-close</v-icon>
+                </v-btn>
+            </v-toolbar>
+
+            <v-card-text>
+                <v-row class="d-flex justify-center">
+                    <v-col cols="10">
+                        <v-textarea v-model="agendamento.motivo_alteracao" label="Motivo do Cancelamento"
+                            required></v-textarea>
+                    </v-col>
+                    <v-col cols="12" class="d-flex justify-center">
+                        <v-btn @click="cancelarAgendamentoSubmit" :loading="submeterAprovacaoLoading"
+                            color="primary">Confirmar cancelamento</v-btn>
+                    </v-col>
+                </v-row>
+
+            </v-card-text>
+
+        </v-card>
+
+    </v-dialog>
     <v-card v-if="agendamento && statusAgendamentoInicial.id != 0">
         <v-toolbar color="primary" dark>
             <v-toolbar-title>Agendamento #{{ agendamento.id }}</v-toolbar-title>
@@ -351,7 +451,7 @@ const today = new Date().toISOString().split('T')[0]; // Obtém a data atual no 
                         <v-text-field v-model="agendamento.quantidade_total" variant="outlined" label="Quantidade Total"
                             type="number"></v-text-field>
                     </v-col>
-                    
+
                     <v-col cols="4">
 
                         <SelectComponent v-model:itemId="agendamento.fornecedor_id" controller_name="fornecedor"
@@ -359,7 +459,8 @@ const today = new Date().toISOString().split('T')[0]; // Obtém a data atual no 
                     </v-col>
                     <v-col cols="4">
 
-                        <SelectComponent v-model:itemId="agendamento.empresa_id" label="Empresa entrega" :controller_name="'empresa'">
+                        <SelectComponent v-model:itemId="agendamento.empresa_id" label="Empresa entrega"
+                            :controller_name="'empresa'">
                         </SelectComponent>
 
                     </v-col>
@@ -509,6 +610,10 @@ const today = new Date().toISOString().split('T')[0]; // Obtém a data atual no 
                         </v-card-text>
 
                     </v-card>
+                </v-col>
+                <v-col cols="12" class="d-flex justify-center">
+                    <v-btn v-if="permisaoAlterar" @click="cancelarAgendamentoShow = true" color="error">Cancelar
+                        Agendamento</v-btn>
                 </v-col>
             </v-row>
         </v-card-text>

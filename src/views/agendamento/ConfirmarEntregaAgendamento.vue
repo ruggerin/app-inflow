@@ -84,7 +84,7 @@ const params = ref({
     data_inicial: formatDate(dataInicial),
     data_final: formatDate(dataFinal),
     fornecedor_id: '',
-    status_id: 1,
+    status_id: 2,
 });
 const carregarDadosBtnLoading = ref(false);
 async function carregarDados() {
@@ -94,7 +94,7 @@ async function carregarDados() {
     usuarioList.value = await getUsuarioList();
     try {
         var intoParams = { ...params.value };
-        intoParams.status_id = 1;
+        intoParams.status_id = 2;
         agendamentoList.value = await fetchWrapper.get(`agendamento/index`, { ...intoParams });
         carregarDadosBtnLoading.value = false;
     }
