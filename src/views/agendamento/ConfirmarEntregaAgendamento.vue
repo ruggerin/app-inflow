@@ -17,7 +17,7 @@ import type { StatusAgendamento } from '@/models/StatusAgendamento';
 
 import { formatDate } from '@/utils/helpers/dateUtils';
 import { getFornecedorNomeById, getFornecedorList } from '@/models/Fornecedor';
-import AgendamentoDetalhe from './AgendamentoDetalhe.vue';
+import ConfirmarAgendamentoEntrega from './ConfirmarAgendamentoEntrega.vue';
 
 import type { Usuario } from '@/models/Usuario';
 import { getUsuarioList, getUsuariosByIdFromList } from '@/models/Usuario';
@@ -120,7 +120,7 @@ function getUsuarioNome(id: number) {
 </script>
 <template>
     <v-dialog v-model="dialogDetalheAgendamento">
-        <ConfirmarEntregaAgendamento :agendamento_id="dialogAgendamentoId" @closeDialog="closeDialogAgendamento" />
+        <ConfirmarAgendamentoEntrega :agendamento_id="dialogAgendamentoId" @closeDialog="closeDialogAgendamento" />
     </v-dialog>
     <v-row>
         <v-col cols="12">

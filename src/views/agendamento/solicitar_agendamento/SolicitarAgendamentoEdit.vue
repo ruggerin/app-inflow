@@ -333,7 +333,7 @@ function botaoNavegacaoAcao() {
             });
             return;
         }
-        if (agendamento.value.veiculo_id) {
+        if (agendamento.value.veiculo_id == null) {
             Swal.fire({
                 title: 'Atenção',
                 text: 'Informe o veículo para prosseguir',
@@ -358,9 +358,9 @@ function botaoNavegacaoAcao() {
     if (tab.value < 4) {
         avancarAction();
         if (currentStep.value < tab.value) {
-        currentStep.value = tab.value;
+            currentStep.value = tab.value;
 
-    }
+        }
     }
     else {
         showResumoAgendamento.value = true;
@@ -559,7 +559,7 @@ function finalizar() {
                                     </v-tab>
                                     <v-tab @click="changeTab(2)" :disabled="currentStep < 2" rounded="md"
                                         class="text-left overflow-hidden" height="70">
-                                     
+
                                         <!--  <CreditCardIcon stroke-width="1.5" width="20" class="v-icon--start" /> -->
                                         <v-icon class="v-icon--start" rounded="md">mdi-calendar</v-icon>
                                         <div>
@@ -759,11 +759,30 @@ function finalizar() {
                                     </v-window-item>
                                     <v-window-item :value="2">
                                         <v-row>
+                                            <v-col cols="12">
+                                                <v-row>
+                                                    <v-col cols=12>
+                                                        <h3 class="text-primary">
+                                                            1. Selecione Unidade de entrega
+                                                        </h3>
+                                                    </v-col>
+                                                    <v-col cols="12">
+                                                        <div>
+
+
+                                                            <SelectComponent v-model:itemId="agendamento.empresa_id"
+                                                                label="Empresa entrega" :controller_name="'empresa'">
+                                                            </SelectComponent>
+                                                        </div>
+
+                                                    </v-col>
+                                                </v-row>
+                                            </v-col>
                                             <v-col lg="6" md="6" xl="6" sm="12" xsm="12">
                                                 <v-row class="pa-5">
                                                     <v-col cols=12>
                                                         <h3 class="text-primary">
-                                                            1. Selecione a data de entrega
+                                                            2. Selecione a data de entrega
                                                             <v-icon v-if="agendamento.data_entrega"
                                                                 color="success">mdi-check-circle</v-icon>
                                                             <v-icon v-else color="error">mdi-alert-box</v-icon>
@@ -806,30 +825,12 @@ function finalizar() {
 
 
                                             </v-col>
+                                         
                                             <v-col cols="12">
                                                 <v-row>
                                                     <v-col cols=12>
                                                         <h3 class="text-primary">
-                                                            3. Selecione Unidade
-                                                        </h3>
-                                                    </v-col>
-                                                    <v-col cols="12">
-                                                        <div>
-
-
-                                                            <SelectComponent v-model:itemId="agendamento.empresa_id"
-                                                                label="Empresa entrega" :controller_name="'empresa'">
-                                                            </SelectComponent>
-                                                        </div>
-
-                                                    </v-col>
-                                                </v-row>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-row>
-                                                    <v-col cols=12>
-                                                        <h3 class="text-primary">
-                                                            4. Selecione a doca de descarga
+                                                            3. Selecione a doca de descarga
                                                         </h3>
                                                     </v-col>
                                                     <v-col cols="12">
@@ -915,8 +916,9 @@ function finalizar() {
                                                 <v-col cols="3">
                                                     <!--  <v-text-field v-model="agendamento.tipo_agendamento" variant="outlined"
                             label="Tipo de Agendamento"></v-text-field> -->
-                                                    <v-select label="Prioridade" v-model="agendamento.tipo_agendamento" :disable="!permiteAlterarPrioridade"
-                                                        variant="outlined" :items="prioridadeList"></v-select>
+                                                    <v-select label="Prioridade" v-model="agendamento.tipo_agendamento"
+                                                        :disable="!permiteAlterarPrioridade" variant="outlined"
+                                                        :items="prioridadeList"></v-select>
                                                 </v-col>
                                             </v-col>
                                         </v-row>

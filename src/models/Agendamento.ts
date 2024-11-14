@@ -35,6 +35,7 @@ export interface Agendamento {
   rejeicao_motivo?: string | null; // varchar(255) DEFAULT NULL
   realizado_datahorainicio ?: Date | null; // datetime DEFAULT NULL
   realizado_datahorafim ?: Date | null; // datetime DEFAULT NULL
+  realizado_observacao? : string | null; // text
 
 }
 

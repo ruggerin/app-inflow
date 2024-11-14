@@ -215,7 +215,7 @@ function confirmarEntrega() {
     submeterAprovacaoLoading.value = true;
     fetchWrapper.put('agendamento/confirmarentrega/' + agendamento_id,
         {
-         
+
             realizado_datahorainicio: agendamento.value?.realizado_datahorainicio,
             realizado_datahorafim: agendamento.value?.realizado_datahorafim
         }
@@ -292,7 +292,10 @@ const today = new Date().toISOString().split('T')[0]; // Obtém a data atual no 
                                 label="Data de Entrega" type="datetime-local"></v-text-field>
                         </v-col>
                         <v-col cols="12">
-                            <v-btn @click="confirmarEntrega">Confirmar Entrega</v-btn>
+                        <v-textarea v-model="agendamento.realizado_observacao" label="Observação da entrega" outlined></v-textarea>
+                        </v-col>
+                        <v-col cols="12">
+                            <v-btn color="primary" @click="confirmarEntrega">Confirmar Entrega</v-btn>
                         </v-col>
                     </v-row>
                 </v-card-text>
