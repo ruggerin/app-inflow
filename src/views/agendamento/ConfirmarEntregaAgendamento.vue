@@ -22,6 +22,7 @@ import AgendamentoDetalhe from './AgendamentoDetalhe.vue';
 import type { Usuario } from '@/models/Usuario';
 import { getUsuarioList, getUsuariosByIdFromList } from '@/models/Usuario';
 import Swal from 'sweetalert2';
+import ConfirmarAgendamentoEntrega from './ConfirmarAgendamentoEntrega.vue';
 
 
 const themeColor = ref('rgb(var(--v-theme-secondary))');
@@ -166,9 +167,9 @@ function getUsuarioNome(id: number) {
 </script>
 <template>
     <v-dialog v-model="dialogDetalheAgendamento">
-        <ConfirmarEntregaAgendamento @closeDialog="closeDialogAgendamento" @refreshList="carregarDados()"
+        <ConfirmarAgendamentoEntrega @closeDialog="closeDialogAgendamento" @refreshList="carregarDados()"
             :agendamento_id="dialogAgendamentoId">
-        </ConfirmarEntregaAgendamento>
+        </ConfirmarAgendamentoEntrega>
     </v-dialog>
     <v-row>
         <v-col cols="12">
