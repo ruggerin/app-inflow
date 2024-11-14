@@ -172,7 +172,7 @@ function getUsuarioNome(id: number) {
     </v-dialog>
     <v-row>
         <v-col cols="12">
-            <h3>Confirmação de entrega</h3>
+            <h3>Aprovar agendamento</h3>
         </v-col>
 
         <v-col cols="12" class="">
