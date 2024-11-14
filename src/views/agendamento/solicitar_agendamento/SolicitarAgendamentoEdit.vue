@@ -795,7 +795,7 @@ function finalizar() {
                                                 </v-row>
                                             </v-col>
                                             <v-col lg="6" md="6" xl="6" sm="12" xsm="12">
-                                                <h3 class="text-primary">2. Selecione o horario disponível para data ({{
+                                                <h3 class="text-primary">3. Selecione o horario disponível para data ({{
                                                     moment(agendamento.data_entrega).format('DD/MM/YYYY') }})</h3>
 
 
@@ -830,7 +830,7 @@ function finalizar() {
                                                 <v-row>
                                                     <v-col cols=12>
                                                         <h3 class="text-primary">
-                                                            3. Selecione a doca de descarga
+                                                            4. Selecione a doca de descarga
                                                         </h3>
                                                     </v-col>
                                                     <v-col cols="12">

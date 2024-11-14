@@ -95,12 +95,12 @@ function formatDateTime(date: string, time: string): string {
 const calendarEvents = computed(() => {
     return items.value.map(agendamento => ({
         id: agendamento.id.toString(),
-        title: `Entrega: ${agendamento.tipo_agendamento}`,
+        title:  agendamento.fornecedor_id ? getFornecedorNomeById(agendamento.fornecedor_id) : '',
         time: {
             start: formatDateTime(String(agendamento.data_entrega), String(agendamento.horario_inicio)),
             end: formatDateTime(String(agendamento.data_entrega), String(agendamento.horario_fim))
         },
-        description: agendamento.fornecedor_id ? getFornecedorNomeById(agendamento.fornecedor_id) : '',
+        description:  `Entrega: ${agendamento.tipo_agendamento}`,
         //color:  "blue" , // Você pode ajustar a cor conforme necessário
         color: agendamento.status_id ? getStatusById(agendamento.status_id).cor_fundo : 'grey',//agendamento.status_id ? colorQalendar(agendamento.status_id) : 'grey',
         isEditable: true,
@@ -317,7 +317,7 @@ const toggle = ref(0);
                         Novo agendamento
                     </v-btn>
                 </div>
-     <!--            <div class="pa-1">
+                <!--            <div class="pa-1">
                     <v-btn color="error" :to="{ path: '/agendamento/solicitar/novo/editar' }">
                         <v-icon>mdi-alert-box</v-icon>
                         Agendamento de emergência
@@ -327,7 +327,7 @@ const toggle = ref(0);
 
             <v-col cols="12" class="d-flex justify-end">
                 <v-btn-toggle v-model="toggle" divided>
-                  
+
                     <v-btn icon="mdi-calendar-multiselect"></v-btn>
                     <v-btn icon="mdi-table-of-contents"></v-btn>
                 </v-btn-toggle>
@@ -372,6 +372,19 @@ const toggle = ref(0);
                                     <v-col cols="12">
                                         <span>{{ eventProps.eventData.description }}</span>
                                     </v-col>
+                                </v-row>
+                            </div>
+                        </template>
+                        <template #monthEvent="eventProps">
+                            <div class="pa-2"
+                                :style="{ backgroundColor: eventProps.eventData.color, color: '#fff', width: '100%', height: '100%', overflow: 'hidden' }">
+                                <v-row>
+                                    <v-col cols="12">
+
+                                        <span> <v-icon>mdi-clock</v-icon> {{ getObjHourString(eventProps.eventData.time)
+                                            }} {{ eventProps.eventData.description }}</span>
+                                    </v-col>
+                                    
                                 </v-row>
                             </div>
                         </template>
