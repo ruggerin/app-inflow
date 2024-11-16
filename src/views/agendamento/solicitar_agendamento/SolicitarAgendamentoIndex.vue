@@ -8,6 +8,7 @@ import { Qalendar } from 'qalendar'; // Certifique-se de que o componente Qalend
 import 'qalendar/dist/style.css'; // Importar o estilo do Qalendar
 
 import type { Fornecedor } from '@/models/Fornecedor';
+import type { Empresa } from '@/models/Empresa';
 
 import UiParentCard from '@/components/shared/UiParentCard.vue';
 import Swal from 'sweetalert2';
@@ -39,6 +40,7 @@ onMounted(async () => {
     //Aplicação de filtro frontent
     await carregarDados()
     await getStatus();
+    await getEmpresaUnidade();
     //console.log(items.value);
 
 
@@ -46,6 +48,7 @@ onMounted(async () => {
 const items = ref<Agendamento[]>([]);
 const fornecedorList = ref<Fornecedor[]>([]);
 const statusList = ref<Status[]>([]);
+const empresaList = ref<Empresa[]>([]);
 
 interface Status {
     id: number;
@@ -95,12 +98,12 @@ function formatDateTime(date: string, time: string): string {
 const calendarEvents = computed(() => {
     return items.value.map(agendamento => ({
         id: agendamento.id.toString(),
-        title:  agendamento.fornecedor_id ? getFornecedorNomeById(agendamento.fornecedor_id) : '',
+        title: agendamento.fornecedor_id ? getFornecedorNomeById(agendamento.fornecedor_id) : '',
         time: {
             start: formatDateTime(String(agendamento.data_entrega), String(agendamento.horario_inicio)),
             end: formatDateTime(String(agendamento.data_entrega), String(agendamento.horario_fim))
         },
-        description:  `Entrega: ${agendamento.tipo_agendamento}`,
+        description: `Entrega: ${agendamento.tipo_agendamento}`,
         //color:  "blue" , // Você pode ajustar a cor conforme necessário
         color: agendamento.status_id ? getStatusById(agendamento.status_id).cor_fundo : 'grey',//agendamento.status_id ? colorQalendar(agendamento.status_id) : 'grey',
         isEditable: true,
@@ -160,6 +163,14 @@ function getStatus() {
     })
 }
 
+function getEmpresaUnidade() {
+    fetchWrapper.get('cadastros_basicos/empresa').then((response) => {
+        empresaList.value = response;
+        console.log(response)
+        return response
+    })
+}
+
 function getStatusById(id: number): Status {
 
     const status = statusList.value.find(status_i => status_i.id == id);
@@ -214,6 +225,12 @@ function fornecedorSelectProps(item: any) {
         subtitle: item.cnpj_cpf,
     };
 }
+function empresaSelectProps(item: any) {
+    return {
+        title: item.nome,
+        subtitle: item.cnpj_cpf,
+    };
+}
 
 
 
@@ -225,6 +242,7 @@ function getAgendamentoById(id: number): Agendamento {
 const params = ref({
     data_inicial: formatDate(dataInicial),
     data_final: formatDate(dataFinal),
+    empresa_id: 0,
     fornecedor_id: '',
     status_id: '',
 });
@@ -278,18 +296,27 @@ const toggle = ref(0);
                                     <v-text-field variant="outlined" type="date" label="Data Final"
                                         v-model="params.data_final" class="mr-2"></v-text-field>
                                 </v-col>
-                                <v-col lg="5" md="6" cols="12">
+                                <v-col lg="4" md="6" cols="12">
+
+                                    <v-select variant="outlined" clearable v-model="params.empresa_id"
+                                        :items="empresaList" item-title="nome" item-value="id"
+                                        :item-props="empresaSelectProps" label="Unidade entrega">
+                                    </v-select>
+                                </v-col>
+                                <v-col lg="4" md="6" cols="12">
 
                                     <v-select variant="outlined" clearable v-model="params.fornecedor_id"
                                         :items="fornecedorList" item-title="nome" item-value="id"
                                         :item-props="fornecedorSelectProps" label="Fornecedor">
                                     </v-select>
                                 </v-col>
+
                                 <v-col lg="3" md="6" cols="12">
                                     <v-select variant="outlined" clearable v-model="params.status_id"
                                         :items="statusList" item-title="descricao" item-value="id" label="Status">
                                     </v-select>
                                 </v-col>
+
 
                                 <v-col lg="12">
                                     <div class="d-flex justify-end" style="width: 100%;">
@@ -384,7 +411,7 @@ const toggle = ref(0);
                                         <span> <v-icon>mdi-clock</v-icon> {{ getObjHourString(eventProps.eventData.time)
                                             }} {{ eventProps.eventData.description }}</span>
                                     </v-col>
-                                    
+
                                 </v-row>
                             </div>
                         </template>

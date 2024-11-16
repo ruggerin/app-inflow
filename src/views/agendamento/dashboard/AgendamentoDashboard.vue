@@ -20,10 +20,11 @@ import { getDocasList } from '@/models/Docas';
 import * as _ from 'lodash'; // Importa todas as funções de lodash
 import * as ss from 'simple-statistics'; // Importa todas as funções de simple-statistics
 import AgendamentoDetalhe from '../AgendamentoDetalhe.vue';
-
+import type { Empresa } from '@/models/Empresa';
 
 
 const agendamentos = ref<Agendamento[]>([]);
+const empresaList = ref<Empresa[]>([]);
 const fornecedorList = ref<Fornecedor[]>([]);
 const statusList = ref<StatusAgendamento[]>([]);
 const docasList = ref<Docas[]>([]);
@@ -108,6 +109,7 @@ const params = ref({
     data_inicial: formatDate(dataInicial),
     data_final: formatDate(dataFinal),
     fornecedor_id: '',
+    empresa_id: '',
     status_id: '',
 });
 
@@ -267,9 +269,19 @@ const lineChartStatus = computed(() => {
 onMounted(async () => {
     await getStatus();
 
+
     docasList.value = await getDocasList();
     await carregarDados();
+    getEmpresaUnidade();
 })
+
+function getEmpresaUnidade() {
+    fetchWrapper.get('cadastros_basicos/empresa').then((response) => {
+        empresaList.value = response;
+        console.log(response)
+        return response
+    })
+}
 
 
 const dialogDetalheAgendamento = ref(false);
@@ -282,10 +294,18 @@ function closeDialogAgendamento() {
     dialogAgendamentoId.value = 0;
     dialogDetalheAgendamento.value = false;
 }
+
+function empresaSelectProps(item: any) {
+    return {
+        title: item.nome,
+        subtitle: item.cnpj_cpf,
+    };
+}
 </script>
 <template>
     <v-dialog v-model="dialogDetalheAgendamento">
-        <AgendamentoDetalhe @closeDialog="closeDialogAgendamento" @refreshList="carregarDados()" :agendamento_id="dialogAgendamentoId">
+        <AgendamentoDetalhe @closeDialog="closeDialogAgendamento" @refreshList="carregarDados()"
+            :agendamento_id="dialogAgendamentoId">
         </AgendamentoDetalhe>
     </v-dialog>
     <v-row>
@@ -311,6 +331,13 @@ function closeDialogAgendamento() {
                             <v-col lg="2" md="6" cols="12">
                                 <v-text-field variant="outlined" type="date" label="Data Final"
                                     v-model="params.data_final" class="mr-2"></v-text-field>
+                            </v-col>
+                            <v-col lg="4" md="6" cols="12">
+
+                                <v-select variant="outlined" clearable v-model="params.empresa_id" :items="empresaList"
+                                    item-title="nome" item-value="id" :item-props="empresaSelectProps"
+                                    label="Unidade entrega">
+                                </v-select>
                             </v-col>
                             <v-col lg="5" md="6" cols="12">
 
@@ -388,9 +415,9 @@ function closeDialogAgendamento() {
                                     item.horario_fim }}
                             </v-list-item-title>
                             <v-list-item-subtitle v-if="item.fornecedor_id">
-                                {{ getFornecedorNomeById(item.fornecedor_id, fornecedorList) }} 
+                                {{ getFornecedorNomeById(item.fornecedor_id, fornecedorList) }}
                             </v-list-item-subtitle>
-                            <v-list-item-subtitle >
+                            <v-list-item-subtitle>
                                 {{ item.volume_total }} Volumes, {{ item.quantidade_total }} Items
                             </v-list-item-subtitle>
 

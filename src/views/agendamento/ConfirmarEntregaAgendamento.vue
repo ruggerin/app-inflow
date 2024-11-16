@@ -6,7 +6,7 @@ import 'vue3-easy-data-table/dist/style.css';
 import type { Agendamento } from '@/models/Agendamento';
 import type { Fornecedor } from '@/models/Fornecedor';
 
-
+import type { Empresa } from '@/models/Empresa';
 
 
 import { getStatusList } from '@/models/StatusAgendamento';
@@ -53,7 +53,7 @@ const btnRefreshLoading = ref(false);
 
 onMounted(async () => {
     await carregarDados();
-
+    await getEmpresaUnidade();
     getStatus();
 });
 async function carregarDados1() {
@@ -85,6 +85,7 @@ const params = ref({
     data_final: formatDate(dataFinal),
     fornecedor_id: '',
     status_id: 2,
+    empresa_id: '',
 });
 const carregarDadosBtnLoading = ref(false);
 async function carregarDados() {
@@ -164,6 +165,24 @@ function getUsuarioNome(id: number) {
     return usuario ? usuario.nome : 'System';
 }
 
+const empresaList = ref<Empresa[]>([]);
+
+function empresaSelectProps(item: any) {
+    return {
+        title: item.nome,
+        subtitle: item.cnpj_cpf,
+    };
+}
+
+function getEmpresaUnidade() {
+    fetchWrapper.get('cadastros_basicos/empresa').then((response) => {
+        empresaList.value = response;
+        console.log(response)
+        return response
+    })
+}
+
+
 </script>
 <template>
     <v-dialog v-model="dialogDetalheAgendamento">
@@ -194,6 +213,13 @@ function getUsuarioNome(id: number) {
                                 <v-text-field variant="outlined" type="date" label="Data Final"
                                     v-model="params.data_final" class="mr-2"></v-text-field>
                             </v-col>
+                            <v-col lg="4" md="6" cols="12">
+
+                                <v-select variant="outlined" clearable v-model="params.empresa_id" :items="empresaList"
+                                    item-title="nome" item-value="id" :item-props="empresaSelectProps"
+                                    label="Unidade entrega">
+                                </v-select>
+                            </v-col>
                             <v-col lg="5" md="6" cols="12">
 
                                 <v-select variant="outlined" clearable v-model="params.fornecedor_id"
@@ -201,7 +227,7 @@ function getUsuarioNome(id: number) {
                                     :item-props="fornecedorSelectProps" label="Fornecedor">
                                 </v-select>
                             </v-col>
-                           
+
 
                             <v-col lg="12">
                                 <div class="d-flex justify-end" style="width: 100%;">
@@ -241,11 +267,11 @@ function getUsuarioNome(id: number) {
                             <v-text-field variant="outlined" prepend-inner-icon="mdi-magnify" v-model="searchTerm">
                             </v-text-field>
                         </v-col>
-                       
+
                         <v-col cols="12">
 
-                            <EasyDataTable :loading="carregarDadosBtnLoading" table-class-name="customize-table" :theme-color="themeColor"
-                                :headers="headers" :items="filteredAgendamentos()">
+                            <EasyDataTable :loading="carregarDadosBtnLoading" table-class-name="customize-table"
+                                :theme-color="themeColor" :headers="headers" :items="filteredAgendamentos()">
                                 <template #item-fornecedor_id="{ fornecedor_id }">
                                     {{ getFornecedorNomeById(fornecedor_id, fornecedorList) ?? fornecedor_id }}
                                 </template>

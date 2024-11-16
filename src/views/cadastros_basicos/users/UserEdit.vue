@@ -4,6 +4,7 @@ import type { Header, Item } from 'vue3-easy-data-table';
 
 import { useRoute, useRouter } from 'vue-router';
 
+import type { Empresa } from '@/models/Empresa';
 import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
 import 'vue3-easy-data-table/dist/style.css';
 import UiParentCard from '@/components/shared/UiParentCard.vue';
@@ -38,8 +39,17 @@ interface User {
     email: string,
     password: string,
     perfils: Perfil[]
-    fornecedores: Fornecedores[]
+    fornecedores: Fornecedores[],
+    empresas: UserEmpresas[]
 }
+
+interface UserEmpresas {
+    id: number, //empresa
+    usuario_id: number,
+    empresa_id: number,
+    editItem?: boolean
+}
+
 
 
 const titulo = ref('Carregando...')
@@ -52,6 +62,7 @@ onMounted(async () => {
         await getPerfils();
         await getFornecedores();
         await carregarCadastro();
+        await getEmpresas();
     } else {
 
         titulo.value = "Cadastro de usuário"
@@ -72,6 +83,8 @@ interface Perfil {
 
 const perfilList = ref<Perfil[]>([]);
 const fornecedorList = ref<Fornecedores[]>([]);
+
+const empresaList = ref<Empresa[]>([]);
 
 function getPerfils() {
     fetchWrapper.get('cadastros_basicos/perfil').then((response) => {
@@ -94,6 +107,16 @@ function getFornecedores() {
 
 }
 
+function getEmpresas() {
+    fetchWrapper.get('cadastros_basicos/empresa').then((response) => {
+        empresaList.value = response.map((empresa: any) => {
+            return { id: empresa.id, nome: empresa.nome, cnpj_cpf: empresa.cnpj_cpf }
+        });
+        console.log(response)
+        return response
+    })
+}
+
 function voltarIndex() {
 
     router.push('/controle-de-acesso/usuarios');
@@ -113,7 +136,8 @@ async function carregarCadastro() {
                 email: '',
                 password: '',
                 perfils: [],
-                fornecedores: []
+                fornecedores: [],
+                empresas: []
             }
             loadingBtn.value = false;
             return;
@@ -137,12 +161,22 @@ const form = ref<User>({
     email: '',
     password: '',
     perfils: [],
-    fornecedores: []
+    fornecedores: [],
+    empresas: []
 });
 
 function getPerfilNomeById(id: number) {
     const perfil = perfilList.value.find(perfil => perfil.perfil_id === id);
     return perfil ? perfil.nome : '';
+}
+
+function getEmpresaByid(id: number) {
+    const empresa = empresaList.value.find(empresa => empresa.id == id);
+    console.log("id:", id)
+    console.log("empresa:", empresaList.value)
+    console.log("empresa:", empresa)
+    return empresa ? id + ' -' + empresa.nome + ' - ' + empresa.cnpj_cpf : id;
+
 }
 
 function getFornecedorNomeById(id: number) {
@@ -211,6 +245,23 @@ function removerFornecedor(item: any) {
     }
     form.value.fornecedores = form.value.fornecedores.filter(fornecedor => fornecedor !== item);
 }
+
+
+function removerEmpresa(item: any) {
+    if (!form.value.empresas) {
+        return;
+    }
+    form.value.empresas = form.value.empresas.filter(empresa => empresa !== item);
+}
+
+function adicionarEmpresa() {
+    const novo: UserEmpresas = { usuario_id: 0, id: 0, empresa_id: 0, editItem: true }
+    if (!form.value.empresas) {
+        form.value.empresas = []
+    }
+    form.value.empresas.push(novo)
+}
+
 function adcionarPerfil() {
     const novoPerfil: Perfil = { perfil_id: 0, nome: '', editItem: true }
     if (!form.value.perfils) {
@@ -242,6 +293,16 @@ function finishEditFornecedorItem(item: Fornecedores) {
     // Se o item for encontrado, atualizá-lo
     if (index !== -1) {
         form.value.fornecedores[index] = { ...item, editItem: false };
+    }
+}
+
+function finishEditEmpresaItem(item: UserEmpresas) {
+    // Encontrar o índice do item no array
+    const index = form.value.empresas.findIndex(empresa => empresa.empresa_id === item.empresa_id);
+
+    // Se o item for encontrado, atualizá-lo
+    if (index !== -1) {
+        form.value.empresas[index] = { ...item, editItem: false };
     }
 }
 
@@ -333,6 +394,52 @@ function itemProps(item: any) {
                     <div class="d-flex align-center justify-center">
                         <v-btn variant="text" color="secondary"
                             @click="adcionarPerfil"><v-icon>mdi-plus-circle</v-icon>Adicionar Perfil</v-btn>
+                    </div>
+                </v-col>
+                <v-col lg="8" md="8" sm="12">
+
+                    <v-list>
+                        <v-list-item>
+
+                            <v-list-item-title>Restrição de empresas/Filiais/Unidade entrega</v-list-item-title>
+
+
+                        </v-list-item>
+                        <v-divider></v-divider>
+
+                        <v-list-item v-for="item in form.empresas" :key="item.id">
+                            <v-row>
+                                <v-col cols="9">
+
+                                    <!--   <v-text-field v-model="item.nome"></v-text-field> -->
+
+                                    <v-select v-if="item.editItem" v-model="item.id" :items="empresaList"
+                                        item-title="nome" item-value="empresa_id" :item-props="itemProps"
+                                        label="Empresa" filterable>
+
+                                    </v-select>
+                                    <span v-else>{{ getEmpresaByid(item.id) }}</span>
+
+                                </v-col>
+                                <v-col cols="3" class="d-flex align-center justify-center">
+                                    <div style="height: 100%;  margin-top: 15%;">
+                                        <v-btn variant="text" v-if="item.editItem" color="primary" small
+                                            @click="finishEditEmpresaItem(item)"><v-icon>
+                                                mdi-check-bold</v-icon></v-btn>
+                                        <v-btn variant="text" small @click="removerEmpresa(item)">
+                                            <v-icon>mdi-delete</v-icon>
+                                        </v-btn>
+                                    </div>
+
+                                </v-col>
+                            </v-row>
+                        </v-list-item>
+
+                    </v-list>
+                    <div class="d-flex align-center justify-center">
+                        <v-btn variant="text" color="secondary"
+                            @click="adicionarEmpresa"><v-icon>mdi-plus-circle</v-icon>Adicionar
+                            Empresa</v-btn>
                     </div>
                 </v-col>
                 <v-col lg="8" md="8" sm="12">
