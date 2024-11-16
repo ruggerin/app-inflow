@@ -6,7 +6,7 @@ import moment from 'moment';
 import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
 
 import type { Docas } from '@/models/Docas';
-
+import { DateTime } from 'luxon';
 import type { StatusAgendamento } from '@/models/StatusAgendamento';
 import { useAuthStore } from '@/stores/auth';
 
@@ -138,6 +138,17 @@ function getAgendamento(agendamento_id: number) {
     fetchWrapper.get('agendamento/show/' + agendamento_id).then((response) => {
         console.log(response);
         agendamento.value = response;
+        if (agendamento.value?.data_entrega && agendamento.value?.horario_fim) {
+            agendamento.value.realizado_datahorafim = `${agendamento.value.data_entrega} ${agendamento.value.horario_fim}`;
+
+            console.log('agendamento fim', agendamento.value.realizado_datahorafim);
+        }
+        if (agendamento.value?.data_entrega && agendamento.value?.horario_inicio) {
+            agendamento.value.realizado_datahorainicio = `${agendamento.value.data_entrega} ${agendamento.value.horario_inicio}`;
+
+            console.log('agendamento fim', agendamento.value.realizado_datahorafim);
+        }
+
         statusInicial.value = response.status_id ?? 0;
     });
 }
@@ -285,14 +296,15 @@ const today = new Date().toISOString().split('T')[0]; // Obtém a data atual no 
                         </v-col>
                         <v-col cols="4">
                             <v-text-field v-model="agendamento.realizado_datahorainicio" variant="outlined"
-                                label="Data de Entrega" type="datetime-local"></v-text-field>
+                                label="Data/Hora Fim" type="datetime-local"></v-text-field>
                         </v-col>
                         <v-col cols="4">
                             <v-text-field v-model="agendamento.realizado_datahorafim" variant="outlined"
-                                label="Data de Entrega" type="datetime-local"></v-text-field>
+                                label="Data/Hora Fim" type="datetime-local"></v-text-field>
                         </v-col>
                         <v-col cols="12">
-                        <v-textarea v-model="agendamento.realizado_observacao" label="Observação da entrega" outlined></v-textarea>
+                            <v-textarea v-model="agendamento.realizado_observacao" label="Observação da entrega"
+                                outlined></v-textarea>
                         </v-col>
                         <v-col cols="12">
                             <v-btn color="primary" @click="confirmarEntrega">Confirmar Entrega</v-btn>

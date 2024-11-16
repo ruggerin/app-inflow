@@ -163,6 +163,8 @@ function getUsuarioNome(id: number) {
     return usuario ? usuario.nome : 'System';
 }
 
+
+
 </script>
 <template>
     <v-dialog v-model="dialogDetalheAgendamento">

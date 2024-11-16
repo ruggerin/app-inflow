@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import type { AgendamentoAnexo } from './AgendamentoAnexo';
 import type { AgendamentoDocumento } from './AgendamentoDocumento';
 
@@ -33,8 +34,8 @@ export interface Agendamento {
   empresa_id?: number | null; // bigint unsigned DEFAULT NULL
 
   rejeicao_motivo?: string | null; // varchar(255) DEFAULT NULL
-  realizado_datahorainicio ?: Date | null; // datetime DEFAULT NULL
-  realizado_datahorafim ?: Date | null; // datetime DEFAULT NULL
+  realizado_datahorainicio ?: string| null; // datetime DEFAULT NULL
+  realizado_datahorafim ?: string | null; // datetime DEFAULT NULL
   realizado_observacao? : string | null; // text
 
 }
