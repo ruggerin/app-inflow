@@ -421,44 +421,6 @@ const toggle = ref(0);
                                 :agendamento_id="props.eventDialogData.id">
                             </AgendamentoDetalhe>
 
-
-                            <!-- <v-card>
-                                <v-toolbar dark color="primary" style="flex: unset">
-                                    <v-toolbar-title>Agendamento</v-toolbar-title>
-                                    <v-spacer></v-spacer>
-                                    <v-toolbar-items>
-                                        <v-btn @click="props.closeEventDialog" rounded="md" dark small
-                                            icon><v-icon>mdi-close</v-icon></v-btn>
-                                    </v-toolbar-items>
-                                </v-toolbar>
-                                <v-card-text>
-                                    <IndexAgendamentoEditacaoRapida v-if="props.eventDialogData != null"
-                                        :agendamento="getAgendamentoById(props.eventDialogData.id)">
-                                    </IndexAgendamentoEditacaoRapida>
-                                </v-card-text>
-                            </v-card> -->
-                            <!--  <v-card>
-                                <v-toolbar dark color="primary" style="flex: unset">
-                                    <v-toolbar-title>Agendamento</v-toolbar-title>
-                                    <v-spacer></v-spacer>
-                                    <v-toolbar-items>
-                                        <v-btn    @click="props.closeEventDialog" rounded="md" dark small icon><v-icon>mdi-close</v-icon></v-btn>
-                                    </v-toolbar-items>
-                                </v-toolbar>
-                                <v-card-text>
-                                    <v-row>
-
-                                   
-                                    </v-row>
-                                </v-card-text>
-                                <v-card-actions>
-                                    <v-btn @click="saveEventChanges(props)" color="editar">Salvar</v-btn>
-                                    <v-btn @click="props.closeEventDialog" color="error">Cancelar</v-btn>
-                                </v-card-actions>
-                          
-                            </v-card> -->
-
-
                         </template>
 
                     </Qalendar>

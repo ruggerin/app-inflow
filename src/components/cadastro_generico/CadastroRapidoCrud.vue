@@ -126,14 +126,42 @@ function dialogRemoveOpen(item: any) {
 const dialogRemoveLoading = ref(false);
 async function remove(id: number) {
   dialogRemoveLoading.value = true;
-  await fetchWrapper.delete(`cadastros_basicos/${fastForm.value?.endpoint}/${id}`).then((response) => {
+  try {
+    const response = await fetchWrapper.delete(`cadastros_basicos/${fastForm.value?.endpoint}/${id}`);
     console.log(response);
     getList();
-  });
-  dialogRemoveLoading.value = false;
-  dialogRemove.value = false;
-  Swal.fire('Removido', 'Item removido com sucesso', 'success');
+  } catch (e: any) {
+    console.log('Erro ao confirmar agendamento');
+ 
 
+    if (e.data.error && e.status === 422 && e.data && typeof e.data.messages === 'object') {
+      // Montando uma mensagem detalhada dos erros de validação
+      const errorMessages = Object.entries(e.data.messages)
+        .map(([field, messages]) => {
+          if (Array.isArray(messages)) {
+            return `${field}: ${messages.join(', <br> ')}`;
+          }
+          return `"${field}": ${messages}`;
+        })
+        .join('\n');
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Não foi possível remover o registro',
+        html: `Os campos abaixo não foram preenchidos corretamente:<br>${errorMessages}`
+      });
+    } else {
+      // Tratamento para outros tipos de erro
+      Swal.fire({
+        icon: 'error',
+        title: 'Não foi possível remover o registro',
+        text: e.data.error ??  e.data.message ??  'Erro desconhecido'
+      });
+    }
+  }finally{
+    dialogRemoveLoading.value = false;
+    dialogRemove.value = false;
+  }
 }
 
 
@@ -206,8 +234,9 @@ function closeEdit() {
       </v-col>
       <v-col cols="12" lg="12">
 
-        <EasyDataTable :loading="gridLoading" :headers="headers" :items="items" rowsPerPageMessage="Registros por página"
-          rowsOfPageSeparatorMessage="de" emptyMessage="Não há registros disponíveis">
+        <EasyDataTable :loading="gridLoading" :headers="headers" :items="items"
+          rowsPerPageMessage="Registros por página" rowsOfPageSeparatorMessage="de"
+          emptyMessage="Não há registros disponíveis">
 
           <template #item-actions="item">
 
@@ -234,3 +263,9 @@ function closeEdit() {
     </v-row>
   </UiParentCard>
 </template>
+<style>
+.my-swal {
+    position: fixed !important;
+    z-index: 9999999 !important;
+}
+</style>
