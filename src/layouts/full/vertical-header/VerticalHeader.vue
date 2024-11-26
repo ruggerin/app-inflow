@@ -39,7 +39,7 @@ watch(priority, (newPriority) => {
 </script>
 
 <template>
-  <v-app-bar elevation="0" :priority="priority" height="80">
+  <v-app-bar elevation="0" :priority="priority" height="80" style=" overflow: visible !important; ">
     <v-btn class="hidden-md-and-down text-secondary" color="lightsecondary" icon rounded="sm" variant="flat"
       @click.stop="customizer.SET_MINI_SIDEBAR(!customizer.mini_sidebar)" size="small">
       <Menu2Icon size="20" stroke-width="1.5" />
@@ -62,7 +62,7 @@ watch(priority, (newPriority) => {
     <!-- ---------------------------------------------- -->
     <!-- Search part -->
     <!-- ---------------------------------------------- -->
-    <v-sheet class="mx-3 v-col-3 v-col-xl-2 v-col-lg-4 d-none d-lg-block">
+    <v-sheet class="mx-3 v-col-3 v-col-xl-2 v-col-lg-4 searchbar-container">
       <Searchbar />
     </v-sheet>
 
@@ -125,15 +125,9 @@ watch(priority, (newPriority) => {
     </v-menu>
   </v-app-bar>
 
-
-
-
-<!--  <v-navigation-drawer v-model="showTarefaRapida" temporary location="right" width="500">
-    <DepadaRapida>
-
-    </DepadaRapida>
-
-
-  </v-navigation-drawer>
-  -->
 </template>
+<style scoped>
+.searchbar-container {
+ 
+}
+</style>

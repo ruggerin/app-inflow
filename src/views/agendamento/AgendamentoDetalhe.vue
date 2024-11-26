@@ -409,55 +409,55 @@ function cancelarAgendamentoSubmit() {
         <v-card-text v-if="agendamento">
             <form @submit.prevent="submit">
                 <v-row>
-                    <v-col cols="2">
+                    <v-col cols="4" xxl="2" xl="2" lg="4" md="4" sm="12" xsm="12">
                         <v-text-field disabled v-model="agendamento.id" variant="outlined"
                             label="Código"></v-text-field>
                     </v-col>
-                    <v-col cols="4" xxl="2" xl="2" lg="2" md="3" sm="12" xsm="12">
+                    <v-col cols="4" xxl="2" xl="4" lg="6" md="6" sm="12" xsm="12">
                         <v-text-field disabled v-model="agendamento.data_agendamento" variant="outlined" :min="today"
                             label="Data de Agendamento" type="datetime-local"></v-text-field>
                     </v-col>
-                    <v-col cols="4" v-if="usuario">
+                    <v-col cols="4" xxl="2" xl="4" lg="6" md="4" sm="6"  v-if="usuario">
                         <v-text-field disabled v-model="usuario.nome" variant="outlined"
                             label="Usuário Solicitante"></v-text-field>
                     </v-col>
-                    <v-col cols="4">
+                    <v-col cols="4"  xxl="2" xl="4" lg="6" md="4" sm="6" >
                         <v-text-field min v-model="agendamento.data_entrega" variant="outlined" label="Data de Entrega"
                             type="date" required></v-text-field>
                     </v-col>
-                    <v-col cols="4">
+                    <v-col  xxl="2" xl="4" lg="6" md="6" sm="12" xsm="12">
                         <v-select v-model="agendamento.periodo_dia" :items="['MANHÃ', 'TARDE', 'NOITE']"
                             variant="outlined" label="Período do Dia"></v-select>
                     </v-col>
-                    <v-col cols="4">
+                    <v-col cols="4"  xxl="2" xl="2" lg="6" md="4" sm="6" >
                         <v-text-field v-model="agendamento.horario_inicio" variant="outlined" label="Inicial"
                             type="time"></v-text-field>
                     </v-col>
-                    <v-col cols="4">
+                    <v-col cols="4"  xxl="2" xl="2" lg="6" md="4" sm="6" >
                         <v-text-field v-model="agendamento.horario_fim" variant="outlined" label="Final"
                             type="time"></v-text-field>
                     </v-col>
-                    <v-col cols="3">
+                    <v-col cols="3"  xxl="2" xl="4" lg="6" md="4" sm="6" >
                         <!--  <v-text-field v-model="agendamento.tipo_agendamento" variant="outlined"
                             label="Tipo de Agendamento"></v-text-field> -->
                         <v-select label="Prioridade" v-model="agendamento.tipo_agendamento" variant="outlined"
                             :items="prioridadeList"></v-select>
                     </v-col>
-                    <v-col cols="3">
+                    <v-col cols="3"  xxl="2" xl="4" lg="6" md="4" sm="6" >
                         <v-text-field v-model="agendamento.volume_total" variant="outlined" label="Volume Total"
                             type="number" step="0.01"></v-text-field>
                     </v-col>
-                    <v-col cols="3">
+                    <v-col cols="3"  xxl="2" xl="4" lg="6" md="4" sm="6" >
                         <v-text-field v-model="agendamento.quantidade_total" variant="outlined" label="Quantidade Total"
                             type="number"></v-text-field>
                     </v-col>
 
-                    <v-col cols="4">
+                    <v-col cols="4"  xxl="2" xl="6" lg="6" md="4" sm="6" >
 
                         <SelectComponent v-model:itemId="agendamento.fornecedor_id" controller_name="fornecedor"
                             label="Fornecedor"></SelectComponent>
                     </v-col>
-                    <v-col cols="4">
+                    <v-col cols="4"  xxl="2" xl="4" lg="6" md="4" sm="6" >
 
                         <SelectComponent v-model:itemId="agendamento.empresa_id" label="Empresa entrega"
                             :controller_name="'empresa'">
@@ -465,7 +465,7 @@ function cancelarAgendamentoSubmit() {
 
                     </v-col>
 
-                    <v-col cols="4">
+                    <v-col cols="4"  xxl="2" xl="4" lg="6" md="4" sm="6" >
 
                         <SelectComponent v-model:itemId="agendamento.doca_id" label="Doca" :controller_name="'docas'">
                         </SelectComponent>

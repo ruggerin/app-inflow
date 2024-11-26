@@ -446,7 +446,8 @@ function empresaSelectProps(item: any) {
                             <v-window-item v-for="status in statusList" :key="status.id" :value="status.id">
                                 <v-card flat>
                                     <v-card-text>
-                                        <EasyDataTable table-class-name="customize-table" :theme-color="themeColor"
+                                        <EasyDataTable table-class-name="customize-table" :theme-color="themeColor" rowsPerPageMessage="Registros por página"
+          rowsOfPageSeparatorMessage="de" emptyMessage="Não há registros disponíveis"
                                             :headers="headers" :items="filteredAgendamentos(status.id)">
                                             <template #item-fornecedor_id="{ fornecedor_id }">
                                                 {{ getFornecedorNomeById(fornecedor_id, fornecedorList) }}

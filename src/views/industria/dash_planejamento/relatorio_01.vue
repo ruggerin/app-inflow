@@ -377,7 +377,8 @@ const formatarParaReal = (valor: number | undefined) => {
                                         <!--Inicio painel para Computador-->
 
                                         <div>
-                                            <EasyDataTable :theme-color="themeColor" paginate="false" hide-default-footer
+                                            <EasyDataTable :theme-color="themeColor" paginate="false" hide-default-footer rowsPerPageMessage="Registros por página"
+          rowsOfPageSeparatorMessage="de" emptyMessage="Não há registros disponíveis"
                                                 table-class-name="customize-table" :headers="headers"
                                                 :items="dataResumo.departamentos">
                                                 <template #item-id="{ id }">

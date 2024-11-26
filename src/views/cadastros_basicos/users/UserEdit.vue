@@ -118,10 +118,7 @@ function getEmpresas() {
 }
 
 function voltarIndex() {
-
     router.push('/controle-de-acesso/usuarios');
-
-
 }
 
 
@@ -315,6 +312,26 @@ function itemProps(item: any) {
     };
 }
 
+const nomeRules = [
+    (v: string) => !!v || 'Nome é obrigatório',
+];
+
+const emailRules = [
+    (v: string) => !!v || 'E-mail é obrigatório',
+    (v: string) => /.+@.+\..+/.test(v) || 'E-mail deve ser válido',
+];
+
+const passwordRules = [
+    (v: string) => !!v || 'Senha é obrigatória',
+    (v: string) => v.length >= 8 || 'A senha deve ter pelo menos 8 caracteres',
+];
+
+const perfilRules = [
+    (v: Perfil[]) => v.length > 0 || 'Selecione ao menos um perfil',
+];
+
+
+
 
 </script>
 <template>
@@ -328,17 +345,17 @@ function itemProps(item: any) {
                 </v-col>
                 <v-col lg="8" md="8" sm="12">
                     <v-text-field required v-model="form.nome" variant="outlined" label="Nome" hide-details
-                        color="primary"></v-text-field>
+                        color="primary" :rules="nomeRules"></v-text-field>
                 </v-col>
                 <v-col lg="8" md="8" sm="12">
                     <v-text-field required v-model="form.email" variant="outlined" label="E-mail" hide-details
-                        color="primary"></v-text-field>
+                        color="primary" :rules="emailRules"></v-text-field>
                 </v-col>
                 <v-col lg="8" md="8" sm="12">
                     <v-text-field :required="route.params.id == 'novo'" v-model="form.password" label="Senha"
                         density="comfortable" variant="outlined" color="primary" hide-details="auto"
                         :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'"
-                        @click:append="show1 = !show1" class="pwdInput"></v-text-field>
+                        @click:append="show1 = !show1" class="pwdInput" :rules="passwordRules"></v-text-field>
                 </v-col>
                 <!-- <v-col lg="8" md="8" sm="12">
                     <v-file-input

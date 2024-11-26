@@ -102,15 +102,15 @@ function edit(id: number) {
 
 
 const dialogRemove = ref(false);
-const formRemove = ref({titulo: '', subtitulo: ''});
+const formRemove = ref({ titulo: '', subtitulo: '' });
 
 function dialogRemoveOpen(item: any) {
   formEditId.value = item.id;
 
   if (fastForm.value?.coluna_titulo) {
     formRemove.value.titulo = item[fastForm.value.coluna_titulo] ?? item.id;
-   
-  
+
+
   } else {
     formRemove.value.titulo = item.id;
   }
@@ -176,8 +176,9 @@ function closeEdit() {
       <v-card-text>
         Deseja realmente remover este item?
         <br>
-        <div v-if="formRemove.titulo!= null">Registro: <br> {{ formRemove.titulo }}<br><span v-if="formRemove.subtitulo">({{ formRemove.subtitulo }})</span> 
-          
+        <div v-if="formRemove.titulo != null">Registro: <br> {{ formRemove.titulo }}<br><span
+            v-if="formRemove.subtitulo">({{ formRemove.subtitulo }})</span>
+
         </div>
         <div v-else> Registro Id: {{ formEditId }}</div>
       </v-card-text>
@@ -205,7 +206,8 @@ function closeEdit() {
       </v-col>
       <v-col cols="12" lg="12">
 
-        <EasyDataTable :loading="gridLoading" :headers="headers" :items="items">
+        <EasyDataTable :loading="gridLoading" :headers="headers" :items="items" rowsPerPageMessage="Registros por página"
+          rowsOfPageSeparatorMessage="de" emptyMessage="Não há registros disponíveis">
 
           <template #item-actions="item">
 

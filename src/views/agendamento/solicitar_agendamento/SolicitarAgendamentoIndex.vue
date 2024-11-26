@@ -364,7 +364,8 @@ const toggle = ref(0);
 
 
 
-                <EasyDataTable table-class-name="customize-table" :theme-color="themeColor" :headers="headers"
+                <EasyDataTable table-class-name="customize-table" :theme-color="themeColor" :headers="headers" rowsPerPageMessage="Registros por página"
+          rowsOfPageSeparatorMessage="de" emptyMessage="Não há registros disponíveis"
                     :items="items">
                     <template #item-fornecedor_id="{ fornecedor_id }">
                         {{ getFornecedorNomeById(fornecedor_id) }}
@@ -416,7 +417,12 @@ const toggle = ref(0);
                             </div>
                         </template>
                         <template #eventDialog="props">
-                            <v-card>
+                            <AgendamentoDetalhe @closeDialog="props.closeEventDialog" @refreshList="carregarDados()" v-if="props.eventDialogData != null"
+                                :agendamento_id="props.eventDialogData.id">
+                            </AgendamentoDetalhe>
+
+
+                            <!-- <v-card>
                                 <v-toolbar dark color="primary" style="flex: unset">
                                     <v-toolbar-title>Agendamento</v-toolbar-title>
                                     <v-spacer></v-spacer>
@@ -430,7 +436,7 @@ const toggle = ref(0);
                                         :agendamento="getAgendamentoById(props.eventDialogData.id)">
                                     </IndexAgendamentoEditacaoRapida>
                                 </v-card-text>
-                            </v-card>
+                            </v-card> -->
                             <!--  <v-card>
                                 <v-toolbar dark color="primary" style="flex: unset">
                                     <v-toolbar-title>Agendamento</v-toolbar-title>
@@ -476,10 +482,12 @@ const toggle = ref(0);
 }
 
 .event-flyout {
-
-    width: 700px !important;
+    width: 90vh !important;
     top: 50% !important;
     left: 50% !important;
+    max-height: 80% !important;
     transform: translate(-50%, -50%) !important;
+    z-index: 9999 !important;
+    overflow-y: auto !important; /* Adiciona scroll vertical */
 }
 </style>

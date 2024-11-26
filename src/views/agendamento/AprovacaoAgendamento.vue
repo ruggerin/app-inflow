@@ -83,7 +83,7 @@ const params = ref({
     data_final: formatDate(dataFinal),
     fornecedor_id: '',
     status_id: 1,
-    empresa_id: '', 
+    empresa_id: '',
 });
 const carregarDadosBtnLoading = ref(false);
 async function carregarDados() {
@@ -268,7 +268,9 @@ function empresaSelectProps(item: any) {
                         <v-col cols="12">
 
                             <EasyDataTable :loading="carregarDadosBtnLoading" table-class-name="customize-table"
-                                :theme-color="themeColor" :headers="headers" :items="filteredAgendamentos()">
+                                rowsPerPageMessage="Registros por página" rowsOfPageSeparatorMessage="de"
+                                emptyMessage="Não há registros disponíveis" :theme-color="themeColor" :headers="headers"
+                                :items="filteredAgendamentos()">
                                 <template #item-fornecedor_id="{ fornecedor_id }">
                                     {{ getFornecedorNomeById(fornecedor_id, fornecedorList) ?? fornecedor_id }}
                                 </template>

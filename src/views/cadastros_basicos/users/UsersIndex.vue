@@ -55,7 +55,8 @@ async function carregarDados() {
             </div>
             <v-col cols="12" md="12">
 
-                <EasyDataTable table-class-name="customize-table" :theme-color="themeColor" :headers="headers"
+                <EasyDataTable table-class-name="customize-table" :theme-color="themeColor" :headers="headers" rowsPerPageMessage="Registros por página"
+          rowsOfPageSeparatorMessage="de" emptyMessage="Não há registros disponíveis"
                     :items="items">
 
                     <template #item-acoes="{ id }">

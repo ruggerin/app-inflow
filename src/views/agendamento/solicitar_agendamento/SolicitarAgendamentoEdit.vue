@@ -391,7 +391,7 @@ const documentoEdit = ref<AgendamentoDocumento>({
 });
 
 function doecumentEditClear() {
-    documentoEdit.value = {
+    documentoEdit.value = <AgendamentoDocumento>{
         id: 0,
         pedido_id: null,
         numnota: null,
@@ -415,7 +415,8 @@ function documentRemove(item: AgendamentoDocumento) {
 function documentAdd() {
     var document = documentoEdit.value;
     if (documentoEdit.value != null && documentoEdit.value != undefined) {
-        if (documentoEdit.value.tipo_documento == 'PEDIDO' && documentoEdit.value.pedido_id == null) {
+
+        if (documentoEdit.value.tipo_documento == 'PEDIDO' && ( documentoEdit.value.pedido_id == null || documentoEdit.value.pedido_id == "")) {
             Swal.fire({
                 title: 'Atenção',
                 text: 'Informe o número do pedido',
@@ -424,7 +425,21 @@ function documentAdd() {
             });
             return;
         }
+
+        if(documentoEdit.value.tipo_documento == 'NOTA FISCAL' && documentoEdit.value.numnota == null || documentoEdit.value.pedido_id == ""){
+            Swal.fire({
+                title: 'Atenção',
+                text: 'Informe o número da nota fiscal',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+
         agendamento.value.agendamento_documentos.push(document);
+        documentoEdit.value.pedido_id = null;
+        documentoEdit.value.numnota = null;
         doecumentEditClear();
     }
 }

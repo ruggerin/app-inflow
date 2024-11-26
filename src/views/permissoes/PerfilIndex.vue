@@ -59,7 +59,8 @@ async function carregarDados() {
             <v-col cols="12" md="12">
 
                 <EasyDataTable table-class-name="customize-table" :theme-color="themeColor" :headers="headers"
-                    :items="items">
+                    rowsPerPageMessage="Registros por página" rowsOfPageSeparatorMessage="de"
+                    emptyMessage="Não há registros disponíveis" :items="items">
 
                     <template #item-acoes="{ id }">
                         <v-btn :to="{ path: '/controle-de-acesso/perfil/' + id + '/editar' }" icon variant="text">

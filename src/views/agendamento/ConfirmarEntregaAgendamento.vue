@@ -270,7 +270,8 @@ function getEmpresaUnidade() {
 
                         <v-col cols="12">
 
-                            <EasyDataTable :loading="carregarDadosBtnLoading" table-class-name="customize-table"
+                            <EasyDataTable :loading="carregarDadosBtnLoading" table-class-name="customize-table" rowsPerPageMessage="Registros por página"
+          rowsOfPageSeparatorMessage="de" emptyMessage="Não há registros disponíveis"
                                 :theme-color="themeColor" :headers="headers" :items="filteredAgendamentos()">
                                 <template #item-fornecedor_id="{ fornecedor_id }">
                                     {{ getFornecedorNomeById(fornecedor_id, fornecedorList) ?? fornecedor_id }}
