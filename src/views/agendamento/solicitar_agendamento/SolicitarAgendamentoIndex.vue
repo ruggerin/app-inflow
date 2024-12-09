@@ -33,13 +33,15 @@ const headers: Header[] = [
 
 ];
 
+const horaCalendarioInicio = ref("05:00");
+const horaCalendarioFim = ref("19:00");
 
 onMounted(async () => {
+    await getHoraCalendarioHorarios();
 
-
-    //Aplicação de filtro frontent
     await carregarDados()
     await getStatus();
+
     await getEmpresaUnidade();
     //console.log(items.value);
 
@@ -95,6 +97,25 @@ const agendamentoFastEdit = ref<Agendamento>({ ...emptyAgendamento });
 function formatDateTime(date: string, time: string): string {
     return `${date} ${time.substring(0, 5)}`; // Pega apenas os primeiros 5 caracteres de time (hh:mm)
 }
+
+
+async function getHoraCalendarioHorarios() {
+    await fetchWrapper.get('cadastros_basicos/parametrosgetname/agendamento-hora-inicio').then((response) => {
+        horaCalendarioInicio.value = response.valor;
+        console.log(response)
+        //   return response
+    })
+
+    await fetchWrapper.get('cadastros_basicos/parametrosgetname/agendamento-hora-fim').then((response) => {
+        horaCalendarioFim.value = response.valor;
+        console.log(response)
+        // return response
+    })
+
+
+}
+
+
 const calendarEvents = computed(() => {
     return items.value.map(agendamento => ({
         id: agendamento.id.toString(),
@@ -113,6 +134,8 @@ const calendarEvents = computed(() => {
 });
 
 
+
+
 function colorQalendar(status_id: number): string {
     switch (status_id) {
         case 1:
@@ -121,7 +144,6 @@ function colorQalendar(status_id: number): string {
             return 'green';
         case 3:
             return 'red';
-
         default:
             return 'grey';
     }
@@ -132,18 +154,22 @@ function saveEventChanges(props: any) {
     console.log('saveEventChanges')
 }
 
-// Configurações do calendário
-const calendarConfig = ref({
-    time: {
-        timeStart: '08:00',
-        timeEnd: '18:00',
-    },
-    isSmal: true,
-    eventDialog: {
-        isEditable: false,
-        isCustom: true
-    },
+//const calendarEvents = computed(() => {
+const calendarConfig = computed(() => {
 
+    return {
+        dayBoundaries: {
+            start: parseInt(horaCalendarioInicio.value.substring(0, 2)),
+            end: parseInt(horaCalendarioFim.value.substring(0, 2)),
+        },
+        scrollToHour: 5,
+        isSmal: true,
+        eventDialog: {
+            isEditable: false,
+            isCustom: true
+        },
+
+    }
 });
 
 function getFornecedores() {
@@ -233,7 +259,6 @@ function empresaSelectProps(item: any) {
 }
 
 
-
 function getAgendamentoById(id: number): Agendamento {
 
     return items.value.find(agendamento => agendamento.id == id) || emptyAgendamento;
@@ -259,7 +284,7 @@ const dialogAgendamentoShow = ref(false);
 function abrirDetalhes(id: number | string) {
     console.log('abrirDetalhes', id)
     dialogAgendamentoShow.value = true;
-    dialogAgendamentoId.value =parseInt( id.toString());
+    dialogAgendamentoId.value = parseInt(id.toString());
 }
 
 function closeDialogAgendamento() {
@@ -364,9 +389,9 @@ const toggle = ref(0);
 
 
 
-                <EasyDataTable table-class-name="customize-table" :theme-color="themeColor" :headers="headers" rowsPerPageMessage="Registros por página"
-          rowsOfPageSeparatorMessage="de" emptyMessage="Não há registros disponíveis"
-                    :items="items">
+                <EasyDataTable table-class-name="customize-table" :theme-color="themeColor" :headers="headers"
+                    rowsPerPageMessage="Registros por página" rowsOfPageSeparatorMessage="de"
+                    emptyMessage="Não há registros disponíveis" :items="items">
                     <template #item-fornecedor_id="{ fornecedor_id }">
                         {{ getFornecedorNomeById(fornecedor_id) }}
                     </template>
@@ -416,7 +441,7 @@ const toggle = ref(0);
                                 </v-row>
                             </div>
                         </template>
-                        
+
                     </Qalendar>
                 </div>
 
@@ -444,6 +469,7 @@ const toggle = ref(0);
     max-height: 80% !important;
     transform: translate(-50%, -50%) !important;
     z-index: 9999 !important;
-    overflow-y: auto !important; /* Adiciona scroll vertical */
+    overflow-y: auto !important;
+    /* Adiciona scroll vertical */
 }
 </style>
