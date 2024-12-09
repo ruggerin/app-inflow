@@ -256,10 +256,10 @@ function getObjHourString(objetct: any): string {
 
 const dialogAgendamentoId = ref(0);
 const dialogAgendamentoShow = ref(false);
-function abrirDetalhes(id: number) {
+function abrirDetalhes(id: number | string) {
     console.log('abrirDetalhes', id)
     dialogAgendamentoShow.value = true;
-    dialogAgendamentoId.value = id;
+    dialogAgendamentoId.value =parseInt( id.toString());
 }
 
 function closeDialogAgendamento() {
@@ -389,7 +389,7 @@ const toggle = ref(0);
                 <div class="calendar-container is-light-mode">
                     <Qalendar is-light-mode :events="calendarEvents" :config="calendarConfig">
                         <template #weekDayEvent="eventProps">
-                            <div class="pa-2"
+                            <div class="pa-2" @click="abrirDetalhes(eventProps.eventData.id)"
                                 :style="{ backgroundColor: eventProps.eventData.color, color: '#fff', width: '100%', height: '100%', overflow: 'hidden' }">
                                 <v-row>
                                     <v-col cols="12">
@@ -404,7 +404,7 @@ const toggle = ref(0);
                             </div>
                         </template>
                         <template #monthEvent="eventProps">
-                            <div class="pa-2"
+                            <div class="pa-2" @click="abrirDetalhes(eventProps.eventData.id)"
                                 :style="{ backgroundColor: eventProps.eventData.color, color: '#fff', width: '100%', height: '100%', overflow: 'hidden' }">
                                 <v-row>
                                     <v-col cols="12">
@@ -416,13 +416,7 @@ const toggle = ref(0);
                                 </v-row>
                             </div>
                         </template>
-                        <template #eventDialog="props">
-                            <AgendamentoDetalhe @closeDialog="props.closeEventDialog" @refreshList="carregarDados()" v-if="props.eventDialogData != null"
-                                :agendamento_id="props.eventDialogData.id">
-                            </AgendamentoDetalhe>
-
-                        </template>
-
+                        
                     </Qalendar>
                 </div>
 
