@@ -414,6 +414,7 @@ function documentRemove(item: AgendamentoDocumento) {
 
 function documentAdd() {
     var document = documentoEdit.value;
+    document.volumes = document.volumes == null ? 0 :parseInt( document.volumes.toString());
     if (documentoEdit.value != null && documentoEdit.value != undefined) {
 
         if (documentoEdit.value.tipo_documento == 'PEDIDO' && ( documentoEdit.value.pedido_id == null || documentoEdit.value.pedido_id == "")) {
@@ -437,9 +438,13 @@ function documentAdd() {
         }
 
 
+        console.log(document);
+        
         agendamento.value.agendamento_documentos.push(document);
-        documentoEdit.value.pedido_id = null;
-        documentoEdit.value.numnota = null;
+        console.log(agendamento.value.agendamento_documentos);
+        
+       // documentoEdit.value.pedido_id = null;
+       // documentoEdit.value.numnota = null;
         doecumentEditClear();
     }
 }
